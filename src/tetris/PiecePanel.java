@@ -15,34 +15,33 @@ import javax.swing.JPanel;
  *
  * @author justinbehymer
  */
-public class PiecePanel  extends JPanel {
-    
-    
-
-        private DisplayPiece piece;
+public class PiecePanel extends JPanel
+{
+	private static final long serialVersionUID = 1L;
+	private DisplayPiece piece;
 	public int blockSize = 10;
-	
-	public void setPiece(DisplayPiece piece) 
-        {
+
+	public void setPiece(DisplayPiece piece)
+	{
 		this.piece = piece;
 		repaint();
 	}
-	
-	public Dimension getPreferredSize() 
-        {
+
+	public Dimension getPreferredSize()
+	{
 		return new Dimension(blockSize * 6, blockSize * 5);
 	}
-	
-        @Override
-	public void paintComponent(Graphics g) 
-        {
+
+	@Override
+	public void paintComponent(Graphics g)
+	{
 		super.paintComponent(g);
-		if (piece != null) 
-                {
+		if (piece != null)
+		{
 			g.setColor(piece.color);
-			for (Point block : piece.body) 
-                        {
-				g.fillRect(block.x*(blockSize+2)+blockSize, blockSize*3 - block.y*(blockSize+2)+blockSize, blockSize, blockSize);
+			for (Point block : piece.body)
+			{
+				g.fillRect(block.x * (blockSize + 2) + blockSize, blockSize * 3 - block.y * (blockSize + 2) + blockSize, blockSize, blockSize);
 			}
 		}
 	}

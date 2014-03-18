@@ -12,27 +12,27 @@ import tetris.Board;
  *
  * @author justinbehymer
  */
-public class HeightMinMax extends BoardRater 
+public class HeightMinMax extends BoardRater
 {
-    double rate(Board board)
-    {
-        int maxHeight = 0;
-        int minHeight = board.getHeight();
-        
-        for(int x = 0; x < board.getWidth(); x++)
-        {
-            int height = board.getColumnHeight(x);
-            
-            if(height > maxHeight)
-                //record the height of highest coloumn
-                maxHeight = height;
-            if(height < minHeight)
-                //record height of lowest coloumn
-                minHeight = height;
-            
-        }
-        
-        return maxHeight - minHeight;
-    }
-    
+	double rate(Board board)
+	{
+		int maxHeight = 0;
+		int minHeight = board.getHeight();
+
+		for (int x = 0; x < board.getWidth(); x++)
+		{
+			int height = board.getColumnHeight(x);
+
+			if (height > maxHeight)
+				// record the height of highest coloumn
+				maxHeight = height;
+			if (height < minHeight)
+				// record height of lowest coloumn
+				minHeight = height;
+
+		}
+
+		return maxHeight - minHeight;
+	}
+
 }

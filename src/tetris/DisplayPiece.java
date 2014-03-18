@@ -8,7 +8,6 @@ package tetris;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.util.HashSet;
 
 /**
  *

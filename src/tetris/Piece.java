@@ -119,8 +119,8 @@ public class Piece {
        if(((Piece) obj).body.length != this.body.length)
            return false;
        
-       Collection setA = new HashSet();
-       Collection setB = new HashSet();
+       Collection<Point> setA = new HashSet<Point>();
+       Collection<Point> setB = new HashSet<Point>();
        
        for (int i = 0; i < this.body.length; i++)
        {
@@ -128,7 +128,6 @@ public class Piece {
            setB.add(this.body[i]);
          
        }
-           boolean res = setA.equals(setB);
            return setA.equals(setB);
        
     }
@@ -168,7 +167,7 @@ public class Piece {
      */
     protected static Point[] parsePoints(String string) {
         
-        Vector points = new Vector();
+        Vector<Point> points = new Vector<Point>();
         StringTokenizer tok = new StringTokenizer(string);
         
         try 

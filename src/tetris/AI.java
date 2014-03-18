@@ -12,12 +12,11 @@ import AIHelper.BoardRater;
  *
  * @author justinbehymer
  */
-public interface AI {
-    
-        
-    public Move bestMove(Board board, Piece piece, Piece nextPiece, int limitHeight);
-    
-    public void setRater(BoardRater r);
+public interface AI
+{
 
-    
+	public Move bestMove(Board board, Piece piece, Piece nextPiece, int limitHeight);
+
+	public void setRater(BoardRater r);
+
 }

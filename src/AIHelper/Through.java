@@ -14,21 +14,21 @@ import tetris.Board;
  */
 public class Through extends BoardRater
 {
-    double rate(Board board)
-    {
-        int[] through = new int [board.getWidth()];
-        int troughCount = 0;
-        
-        for(int x = 0; x < board.getWidth(); x++)
-        {
-            int height = board.getColumnHeight(x);
-            //store the hieght for each coloumn
-            if(height > 0 && board.getGrid(x, height-1))
-            {
-                through[x]++;
-                troughCount++;
-            }
-        }
-        return troughCount;
-    }
+	double rate(Board board)
+	{
+		int[] through = new int[board.getWidth()];
+		int troughCount = 0;
+
+		for (int x = 0; x < board.getWidth(); x++)
+		{
+			int height = board.getColumnHeight(x);
+			// store the hieght for each coloumn
+			if (height > 0 && board.getGrid(x, height - 1))
+			{
+				through[x]++;
+				troughCount++;
+			}
+		}
+		return troughCount;
+	}
 }
