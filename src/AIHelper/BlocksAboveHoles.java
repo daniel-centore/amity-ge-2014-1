@@ -12,23 +12,29 @@ import tetris.Board;
  * 
  * @author justinbehymer
  */
-public class BlocksAboveHoles extends BoardRater {
+public class BlocksAboveHoles extends BoardRater
+{
 
     @Override
-    double rate(final Board board) {
+    double rate(final Board board)
+    {
         final int w = board.getWidth();
         int blocksAboveHoles = 0;
-        for (int x = 0; x < w; x++) {
+        for (int x = 0; x < w; x++)
+        {
             int blocksAboveHoleThisColumn = 0;
             boolean hitHoleYet = false;
-            for (int i = board.getColumnHeight(x) - 1; i >= 0; i--) {
-                if (!board.getGrid(x, i)) {
+            for (int i = board.getColumnHeight(x) - 1; i >= 0; i--)
+            {
+                if (!board.getGrid(x, i))
+                {
                     hitHoleYet = true;
                 }
                 blocksAboveHoleThisColumn += hitHoleYet ? 0 : 1;
             }
 
-            if (!hitHoleYet) {
+            if (!hitHoleYet)
+            {
                 blocksAboveHoleThisColumn = 0;
             }
             blocksAboveHoles += blocksAboveHoleThisColumn;

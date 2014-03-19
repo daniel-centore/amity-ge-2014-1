@@ -12,9 +12,11 @@ import tetris.Board;
  * 
  * @author justinbehymer
  */
-public class HeightStdDev extends BoardRater {
+public class HeightStdDev extends BoardRater
+{
     @Override
-    double rate(final Board board) {
+    double rate(final Board board)
+    {
         return Math.sqrt(new HeightVar().rate(board));
     }
 }

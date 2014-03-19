@@ -1,7 +1,7 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template file, choose Tools | Templates and open the template
+ * in the editor.
  */
 
 package amity.genetic;
@@ -15,121 +15,121 @@ import tetris.Move;
 import tetris.TetrisController;
 
 /**
- *
+ * 
  * @author justinbehymer
  */
 public class TetrisGameRunner
 {
-	private TetrisController tc;
-	
+    private final TetrisController  tc;
 
-	private javax.swing.Timer timer;
-	private AI brain;
-	int current_count = -1;
-	private Move mMove;
+    private final javax.swing.Timer timer;
+    private final AI                brain;
+    int                             current_count = -1;
+    private Move                    mMove;
 
-	public TetrisGameRunner(AI brain)
-	{
-		this.brain = brain;
-		tc = new TetrisController();
+    public TetrisGameRunner(final AI brain)
+    {
+        this.brain = brain;
+        this.tc = new TetrisController();
 
-		timer = new javax.swing.Timer(0, new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				tick(TetrisController.DOWN);
-			}
-		});
+        this.timer = new javax.swing.Timer(0, new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e)
+            {
+                TetrisGameRunner.this.tick(TetrisController.DOWN);
+            }
+        });
 
-	}
-	
-	public int getResult()
-	{
-		startGame();
-		
-		while (tc.gameOn)
-		{
-			try
-			{
-				Thread.sleep(1);
-			} catch (InterruptedException e)
-			{
-			}
-		}
-		
-		stopGame();
-		
-		return tc.count;
-	}
-	
-	public TetrisController getTc()
-	{
-		return tc;
-	}
+    }
 
-	protected void tick(int verb)
-	{
-		if (tickAI())
-		{
-			superTick(verb);
-		}
-	}
-	
-	private void superTick(int verb)
-	{
-		tc.tick(verb);
+    public int getResult()
+    {
+        this.startGame();
 
-		if (!tc.gameOn)
-			stopGame();
-	}
-	
-	public int getCount()
-	{
-		return tc.count;
-	}
-	
-	public boolean tickAI()
-	{
-		if (current_count != tc.count)
-		{
-			current_count = tc.count;
-			mMove = brain.bestMove(new Board(tc.board), tc.currentMove.piece, tc.nextPiece, tc.board.getHeight() - TetrisController.TOP_SPACE);
-		}
+        while (this.tc.gameOn)
+        {
+            try
+            {
+                Thread.sleep(1);
+            }
+            catch (final InterruptedException e)
+            {
+            }
+        }
 
-		if (!tc.currentMove.piece.equals(mMove.piece))
-		{
-			superTick(TetrisController.ROTATE);
-		}
-		else if (tc.currentMove.x != mMove.x)
-		{
-			superTick(((tc.currentMove.x < mMove.x) ? TetrisController.RIGHT : TetrisController.LEFT));
-		}
-		else
-		{
-			return true;
-		}
-		return false;
-	}
+        this.stopGame();
 
+        return this.tc.count;
+    }
 
-	/**
-	 Sets the internal state and starts the timer
-	 so the game is happening.
-	*/
-	public void startGame()
-	{
-		tc.startGame();
+    public TetrisController getTc()
+    {
+        return this.tc;
+    }
 
-		timer.start();
-	}
+    protected void tick(final int verb)
+    {
+        if (this.tickAI())
+        {
+            this.superTick(verb);
+        }
+    }
 
-	/**
-	 Stops the game.
-	*/
-	public void stopGame()
-	{
-		tc.gameOn = false;
-		timer.stop();
-	}
-	
+    private void superTick(final int verb)
+    {
+        this.tc.tick(verb);
+
+        if (!this.tc.gameOn)
+        {
+            this.stopGame();
+        }
+    }
+
+    public int getCount()
+    {
+        return this.tc.count;
+    }
+
+    public boolean tickAI()
+    {
+        if (this.current_count != this.tc.count)
+        {
+            this.current_count = this.tc.count;
+            this.mMove = this.brain.bestMove(new Board(this.tc.board), this.tc.currentMove.piece, this.tc.nextPiece, this.tc.board.getHeight() - TetrisController.TOP_SPACE);
+        }
+
+        if (!this.tc.currentMove.piece.equals(this.mMove.piece))
+        {
+            this.superTick(TetrisController.ROTATE);
+        }
+        else if (this.tc.currentMove.x != this.mMove.x)
+        {
+            this.superTick(this.tc.currentMove.x < this.mMove.x ? TetrisController.RIGHT : TetrisController.LEFT);
+        }
+        else
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Sets the internal state and starts the timer so the game is happening.
+     */
+    public void startGame()
+    {
+        this.tc.startGame();
+
+        this.timer.start();
+    }
+
+    /**
+     * Stops the game.
+     */
+    public void stopGame()
+    {
+        this.tc.gameOn = false;
+        this.timer.stop();
+    }
+
 }

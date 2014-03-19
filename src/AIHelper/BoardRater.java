@@ -12,14 +12,16 @@ import tetris.Board;
  * 
  * @author justinbehymer
  */
-public abstract class BoardRater {
+public abstract class BoardRater
+{
 
     int callCount = 0;
     int runTime   = 0;
 
     abstract double rate(Board board);
 
-    public double rateBoard(final Board board) {
+    public double rateBoard(final Board board)
+    {
         this.callCount++;
         board.enableCaching();
         final long start = System.nanoTime();

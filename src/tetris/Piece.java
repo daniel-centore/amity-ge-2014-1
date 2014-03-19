@@ -21,7 +21,8 @@ import java.util.Vector;
  * 
  * @author justinbehymer
  */
-public class Piece {
+public class Piece
+{
 
     protected Point[]        body;
     private int[]            skirt;
@@ -40,10 +41,12 @@ public class Piece {
      * 
      * 
      */
-    protected Piece(final Point[] points) {
+    protected Piece(final Point[] points)
+    {
         this.body = new Point[points.length];
 
-        for (int i = 0; i < points.length; i++) {
+        for (int i = 0; i < points.length; i++)
+        {
             this.body[i] = new Point();
             this.body[i] = points[i];
         }
@@ -54,7 +57,8 @@ public class Piece {
      * 
      * @return
      */
-    public int getWidth() {
+    public int getWidth()
+    {
         return this.width;
     }
 
@@ -63,7 +67,8 @@ public class Piece {
      * 
      * @return
      */
-    public int getHeight() {
+    public int getHeight()
+    {
         return this.height;
     }
 
@@ -73,7 +78,8 @@ public class Piece {
      * 
      * @return
      */
-    public Point[] getBody() {
+    public Point[] getBody()
+    {
         return this.body;
     }
 
@@ -85,7 +91,8 @@ public class Piece {
      * 
      * @return
      */
-    public int[] getSkirt() {
+    public int[] getSkirt()
+    {
         return this.skirt;
     }
 
@@ -95,7 +102,8 @@ public class Piece {
      * 
      * @return
      */
-    public Piece nextRotation() {
+    public Piece nextRotation()
+    {
         return this.next;
     }
 
@@ -108,16 +116,19 @@ public class Piece {
      * @return
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final Object obj)
+    {
         // standard equals()
-        if (((Piece) obj).body.length != this.body.length) {
+        if (((Piece) obj).body.length != this.body.length)
+        {
             return false;
         }
 
         final Collection<Point> setA = new HashSet<Point>();
         final Collection<Point> setB = new HashSet<Point>();
 
-        for (int i = 0; i < this.body.length; i++) {
+        for (int i = 0; i < this.body.length; i++)
+        {
             setA.add(((Piece) obj).body[i]);
             setB.add(this.body[i]);
 
@@ -133,23 +144,24 @@ public class Piece {
      * 
      * @return
      */
-    public static Piece[] getPieces() {
+    public static Piece[] getPieces()
+    {
         // lazy evaluation -- create array if needed
-        if (pieces == null) {
+        if (Piece.pieces == null)
+        {
 
             // use pieceRow() to compute all the rotations for each piece
-            pieces = new Piece[] {
-                    pieceRow(new Piece(parsePoints("0 0	0 1	0 2	0 3"))), // 0
-                    pieceRow(new Piece(parsePoints("0 0	0 1	0 2	1 0"))), // 1
-                    pieceRow(new Piece(parsePoints("0 0	1 0	1 1	1 2"))), // 2
-                    pieceRow(new Piece(parsePoints("0 0	1 0	1 1	2 1"))), // 3
-                    pieceRow(new Piece(parsePoints("0 1	1 1	1 0	2 0"))), // 4
-                    pieceRow(new Piece(parsePoints("0 0	0 1	1 0	1 1"))), // 5
-                    pieceRow(new Piece(parsePoints("0 0	1 0	1 1	2 0"))), // 6
+            Piece.pieces = new Piece[] { Piece.pieceRow(new Piece(Piece.parsePoints("0 0	0 1	0 2	0 3"))), // 0
+                    Piece.pieceRow(new Piece(Piece.parsePoints("0 0	0 1	0 2	1 0"))), // 1
+                    Piece.pieceRow(new Piece(Piece.parsePoints("0 0	1 0	1 1	1 2"))), // 2
+                    Piece.pieceRow(new Piece(Piece.parsePoints("0 0	1 0	1 1	2 1"))), // 3
+                    Piece.pieceRow(new Piece(Piece.parsePoints("0 1	1 1	1 0	2 0"))), // 4
+                    Piece.pieceRow(new Piece(Piece.parsePoints("0 0	0 1	1 0	1 1"))), // 5
+                    Piece.pieceRow(new Piece(Piece.parsePoints("0 0	1 0	1 1	2 0"))), // 6
             };
         }
 
-        return pieces;
+        return Piece.pieces;
     }
 
     /**
@@ -158,13 +170,16 @@ public class Piece {
      * @param string
      * @return
      */
-    protected static Point[] parsePoints(final String string) {
+    protected static Point[] parsePoints(final String string)
+    {
 
         final Vector<Point> points = new Vector<Point>();
         final StringTokenizer tok = new StringTokenizer(string);
 
-        try {
-            while (tok.hasMoreTokens()) {
+        try
+        {
+            while (tok.hasMoreTokens())
+            {
                 final int x = Integer.parseInt(tok.nextToken());
                 final int y = Integer.parseInt(tok.nextToken());
 
@@ -172,7 +187,8 @@ public class Piece {
             }
 
         }
-        catch (final NumberFormatException e) {
+        catch (final NumberFormatException e)
+        {
             throw new RuntimeException("Could not parse x,y string:" + string);
         }
 
@@ -193,20 +209,24 @@ public class Piece {
      * @param root
      * @return
      */
-    protected static Piece pieceRow(final Piece root) {
+    protected static Piece pieceRow(final Piece root)
+    {
         Piece temp = root;
         Piece prev = root;
 
-        for (;;) {
+        for (;;)
+        {
             prev = temp;
             prev.setPieceDims();
             prev.setPieceSkirt();
             temp = new Piece(prev.body);
 
-            if (!temp.equals(root)) {
+            if (!temp.equals(root))
+            {
                 prev.next = root;
             }
-            else {
+            else
+            {
 
                 prev.next = root;
                 break;
@@ -216,12 +236,14 @@ public class Piece {
         return root;
     }
 
-    protected Piece rotatePiece() {
+    protected Piece rotatePiece()
+    {
         Piece piece = null;
         final Point[] temp = new Point[this.body.length];
 
         // switch x,y to y,x
-        for (int i = 0; i < this.body.length; i++) {
+        for (int i = 0; i < this.body.length; i++)
+        {
             temp[i] = new Point();
             temp[i].x = this.body[i].y;
             temp[i].y = this.body[i].x;
@@ -230,7 +252,8 @@ public class Piece {
         piece = new Piece(temp);
         piece.setPieceDims();
 
-        for (int i = 0; i < piece.body.length; i++) {
+        for (int i = 0; i < piece.body.length; i++)
+        {
             temp[i].x = piece.width - 1 - piece.body[i].x;
             temp[i].y = piece.body[i].y;
 
@@ -240,15 +263,19 @@ public class Piece {
         return piece;
     }
 
-    protected void setPieceDims() {
+    protected void setPieceDims()
+    {
         int wmax = -1;
         int hmax = -1;
 
-        for (int i = 0; i < this.body.length; i++) {
-            if (this.body[i].x > wmax) {
+        for (int i = 0; i < this.body.length; i++)
+        {
+            if (this.body[i].x > wmax)
+            {
                 wmax = this.body[i].x;
             }
-            if (this.body[i].y > hmax) {
+            if (this.body[i].y > hmax)
+            {
                 hmax = this.body[i].y;
             }
         }
@@ -258,19 +285,24 @@ public class Piece {
 
     }
 
-    protected void setPieceSkirt() {
+    protected void setPieceSkirt()
+    {
         final int wmax = this.width;
         int hmax;
 
         this.skirt = new int[wmax];
 
-        for (int i = 0; i < wmax; i++) {
+        for (int i = 0; i < wmax; i++)
+        {
             Point temp = null;
             hmax = 10000;
 
-            for (int j = 0; j < this.body.length; j++) {
-                if (this.body[j].x == i) {
-                    if (this.body[j].y < hmax) {
+            for (int j = 0; j < this.body.length; j++)
+            {
+                if (this.body[j].x == i)
+                {
+                    if (this.body[j].y < hmax)
+                    {
                         hmax = this.body[j].y;
                         temp = this.body[j];
                     }

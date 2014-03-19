@@ -7,77 +7,81 @@ import tetris.AI;
 import tetris.Board;
 import tetris.Move;
 import tetris.Piece;
+
 import AIHelper.BoardRater;
 import AIHelper.FinalRater;
 
 public class AmityAI implements AI
 {
-	private FinalRater rater;
-	private Movement bestMovement;
+    private final FinalRater rater;
+    private Movement         bestMovement;
 
-	public AmityAI(double[] coefficients)
-	{
-		rater = new FinalRater(coefficients);
-	}
+    public AmityAI(final double[] coefficients)
+    {
+        this.rater = new FinalRater(coefficients);
+    }
 
-	public AmityAI()
-	{
-		rater = new FinalRater();
-	}
+    public AmityAI()
+    {
+        this.rater = new FinalRater();
+    }
 
-	@Override
-	public Move bestMove(Board board, Piece piece, Piece nextPiece, int limitHeight)
-	{
-		double bestScore = Double.MAX_VALUE;
+    @Override
+    public Move bestMove(final Board board, final Piece piece, final Piece nextPiece, final int limitHeight)
+    {
+        double bestScore = Double.MAX_VALUE;
 
-		// Find all possible end positions, INCLUDING NEXT PIECE, including how to get there
-		List<Movement> level1 = PossibleMoveGenerator.possibleBoards(board, piece, null, limitHeight);
-		List<Movement> level2 = new ArrayList<>();
-		for (Movement m : level1)
-		{
-			List<Movement> sub1 = PossibleMoveGenerator.possibleBoards(m.board, nextPiece, m, limitHeight);
-			level2.addAll(sub1);
-		}
+        // Find all possible end positions, INCLUDING NEXT PIECE, including how
+        // to get there
+        final List<Movement> level1 = PossibleMoveGenerator.possibleBoards(board, piece, null, limitHeight);
+        final List<Movement> level2 = new ArrayList<>();
+        for (final Movement m : level1)
+        {
+            final List<Movement> sub1 = PossibleMoveGenerator.possibleBoards(m.board, nextPiece, m, limitHeight);
+            level2.addAll(sub1);
+        }
 
-		// Weigh all boards using algorithm
+        // Weigh all boards using algorithm
 
-		for (Movement m : level2)
-		{
-			double score = rater.rateBoard(m.board);
+        for (final Movement m : level2)
+        {
+            final double score = this.rater.rateBoard(m.board);
 
-			if (score < bestScore)
-			{
-				bestScore = score;
-				bestMovement = m;
-			}
-		}
+            if (score < bestScore)
+            {
+                bestScore = score;
+                this.bestMovement = m;
+            }
+        }
 
-		if (bestMovement == null)		// no possible option; give up :(
-		{
-			Move m = new Move();
-			m.piece = piece;
-			m.x = 0;
-			
-			return m;
-				
-		}
-		
-		// Use the lowest score
-		Move m = new Move();
-		Movement actual = bestMovement.upper;
-		m.piece = actual.piece;
-		m.x = actual.dropX;
-		
-		if (actual.moveX == 0)	// if there's no second step, then don't use one
-			bestMovement = null;
-		
-		return m;
-	}
+        if (this.bestMovement == null)		// no possible option; give up :(
+        {
+            final Move m = new Move();
+            m.piece = piece;
+            m.x = 0;
 
-	@Override
-	public void setRater(BoardRater r)
-	{
+            return m;
 
-	}
+        }
+
+        // Use the lowest score
+        final Move m = new Move();
+        final Movement actual = this.bestMovement.upper;
+        m.piece = actual.piece;
+        m.x = actual.dropX;
+
+        if (actual.moveX == 0)
+        {
+            this.bestMovement = null;
+        }
+
+        return m;
+    }
+
+    @Override
+    public void setRater(final BoardRater r)
+    {
+
+    }
 
 }

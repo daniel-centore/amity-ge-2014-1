@@ -12,16 +12,20 @@ import tetris.Board;
  * 
  * @author justinbehymer
  */
-public class Through extends BoardRater {
+public class Through extends BoardRater
+{
     @Override
-    double rate(final Board board) {
+    double rate(final Board board)
+    {
         final int[] through = new int[board.getWidth()];
         int troughCount = 0;
 
-        for (int x = 0; x < board.getWidth(); x++) {
+        for (int x = 0; x < board.getWidth(); x++)
+        {
             final int height = board.getColumnHeight(x);
             // store the hieght for each coloumn
-            if (height > 0 && board.getGrid(x, height - 1)) {
+            if (height > 0 && board.getGrid(x, height - 1))
+            {
                 through[x]++;
                 troughCount++;
             }

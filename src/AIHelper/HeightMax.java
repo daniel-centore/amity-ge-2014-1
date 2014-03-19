@@ -12,10 +12,12 @@ import tetris.Board;
  * 
  * @author justinbehymer
  */
-public class HeightMax extends BoardRater {
+public class HeightMax extends BoardRater
+{
 
     @Override
-    double rate(final Board board) {
+    double rate(final Board board)
+    {
         return board.getMaxHeight();
 
     }

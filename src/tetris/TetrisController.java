@@ -12,7 +12,8 @@ import java.util.Random;
  * 
  * @author justinbehymer
  */
-public class TetrisController {
+public class TetrisController
+{
 
     public static final int WIDTH       = 10;
     public static final int HEIGHT      = 20;
@@ -42,11 +43,12 @@ public class TetrisController {
     // random generate new pieces
     public Random           random;
 
-    public TetrisController() {
+    public TetrisController()
+    {
         this.gameOn = false;
 
         this.pieces = DisplayPiece.getPieces();
-        this.board = new DisplayBoard(WIDTH, HEIGHT + TOP_SPACE);
+        this.board = new DisplayBoard(TetrisController.WIDTH, TetrisController.HEIGHT + TetrisController.TOP_SPACE);
         this.displayBoard = new DisplayBoard(this.board);
     }
 
@@ -65,8 +67,10 @@ public class TetrisController {
      * Before this is called, the piece is at the same location in the board.
      * this advances the piece to be at its next location
      */
-    public void tick(final int verb) {
-        if (!this.gameOn) {
+    public void tick(final int verb)
+    {
+        if (!this.gameOn)
+        {
             return;
         }
 
@@ -78,23 +82,27 @@ public class TetrisController {
         // was also down
         // then the pervious position must be the correct landed position
 
-        if (this.board.canPlace(newMove)) {
+        if (this.board.canPlace(newMove))
+        {
             this.currentMove = newMove;
             this.displayBoard = new DisplayBoard(this.board);
             this.displayBoard.place(this.currentMove);
         }
-        else {
+        else
+        {
             // landed
-            if (verb == DOWN) {
+            if (verb == TetrisController.DOWN)
+            {
                 this.board.place(this.currentMove);
                 this.rowsCleared += this.board.clearRows();
 
                 // check to see if board is too tall
-                if (this.board.getMaxHeight() > this.board.getHeight()
-                        - TOP_SPACE) {
+                if (this.board.getMaxHeight() > this.board.getHeight() - TetrisController.TOP_SPACE)
+                {
                     this.gameOn = false;
                 }
-                else {
+                else
+                {
                     // add a new piece and keep playing
                     this.addNewPiece();
                 }
@@ -107,14 +115,16 @@ public class TetrisController {
      * the ivars newX, newY, and newPiece to hold what it thinks the new piece
      * position should be
      */
-    public Move computeNewPosition(final int verb, final Move currentMove) {
+    public Move computeNewPosition(final int verb, final Move currentMove)
+    {
         // as a starting point, the new position is the same as the old
         Piece newPiece = currentMove.piece;
         int newX = currentMove.x;
         int newY = currentMove.y;
 
         // make changes based on the verbs
-        switch (verb) {
+        switch (verb)
+        {
             case LEFT:
                 newX--;
                 break;
@@ -125,12 +135,8 @@ public class TetrisController {
                 newPiece = newPiece.nextRotation();
 
                 // make the piece rotate at its center
-                newX = newX
-                        + (currentMove.piece.getWidth() - newPiece.getWidth())
-                        / 2;
-                newY = newY
-                        + (currentMove.piece.getHeight() - newPiece.getHeight())
-                        / 2;
+                newX = newX + (currentMove.piece.getWidth() - newPiece.getWidth()) / 2;
+                newY = newY + (currentMove.piece.getHeight() - newPiece.getHeight()) / 2;
 
                 break;
 
@@ -139,7 +145,8 @@ public class TetrisController {
                 break;
             case DROP:
                 newY = this.board.dropHeight(newPiece, newX);
-                if (newY > currentMove.y) {
+                if (newY > currentMove.y)
+                {
                     newY = currentMove.y;
                 }
                 break;
@@ -159,12 +166,13 @@ public class TetrisController {
      * sets the intial state and starts the timer
      * 
      */
-    public void startGame() {
+    public void startGame()
+    {
         // different sequence each game
         this.random = new Random();
 
         // reset the baord state
-        this.board = new DisplayBoard(WIDTH, HEIGHT + TOP_SPACE);
+        this.board = new DisplayBoard(TetrisController.WIDTH, TetrisController.HEIGHT + TetrisController.TOP_SPACE);
 
         this.count = 0;
         this.rowsCleared = 0;
@@ -180,14 +188,16 @@ public class TetrisController {
      * selects the next piece to use using the random generator
      * 
      */
-    public DisplayPiece pickNextPiece() {
+    public DisplayPiece pickNextPiece()
+    {
         return this.pieces[this.random.nextInt(this.pieces.length)];
     }
 
     /**
      * tries to add a new random pieces at the top of the board
      */
-    public void addNewPiece() {
+    public void addNewPiece()
+    {
         this.count++;
         // random difficulty
         this.difficulty = (int) (Math.random() * 100);
@@ -200,10 +210,12 @@ public class TetrisController {
 
         this.nextPiece = this.pickNextPiece();
 
-        if (this.board.canPlace(newMove)) {
+        if (this.board.canPlace(newMove))
+        {
             this.currentMove = newMove;
         }
-        else {
+        else
+        {
             this.gameOn = false;
         }
     }

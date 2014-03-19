@@ -12,36 +12,35 @@ import tetris.Board;
  * 
  * @author justinbehymer
  */
-public class FinalRater extends BoardRater {
+public class FinalRater extends BoardRater
+{
     public static BoardRater raters[]     = // staticness prevents these raters
                                             // from getting instantiated over
                                             // and over and over and over
                                             // again... this'll save garbage
                                             // collection time.
-                                          { new ConsecHorzHoles(),
-            new HeightAvg(), new HeightMax(), new HeightMinMax(),
-            new HeightVar(), new HeightStdDev(), new SimpleHoles(),
-            new ThreeVariance(), new Through(), new WeightedHoles(),
-            new RowsWithHolesInMostHoledColumn(),
-            new AverageSquaredTroughHeight(), new BlocksAboveHoles() };
+                                          { new ConsecHorzHoles(), new HeightAvg(), new HeightMax(), new HeightMinMax(), new HeightVar(), new HeightStdDev(), new SimpleHoles(), new ThreeVariance(), new Through(), new WeightedHoles(), new RowsWithHolesInMostHoledColumn(), new AverageSquaredTroughHeight(), new BlocksAboveHoles() };
 
-	public double[] coefficients = {
-			/*new ConsecHorzHoles(),*/0,
-			/*new HeightAvg(),*/10,
-			/*new HeightMax(),*/1,
-			/*new HeightMinMax(),*/1,
-			/*new HeightVar(),*/0,
-			/*new HeightStdDev(),*/5,
-			/*new SimpleHoles(),*/40,
-			/*new ThreeVariance(),*/10,
-			/*new Trough(),*/1,
-			/*new WeightedHoles(),*/4,
-			/*new RowsWithHolesInMostHoledColumn()*/100,
-			/*new AverageSquaredTroughHeight()*/15,
-			/*new BlocksAboveHoles()*/2
-	};
+    public double[]          coefficients = {
+                                          /* new ConsecHorzHoles(), */0,
+                                          /* new HeightAvg(), */10,
+                                          /* new HeightMax(), */1,
+                                          /* new HeightMinMax(), */1,
+                                          /* new HeightVar(), */0,
+                                          /* new HeightStdDev(), */5,
+                                          /* new SimpleHoles(), */40,
+                                          /* new ThreeVariance(), */10,
+                                          /* new Trough(), */1,
+                                          /* new WeightedHoles(), */4,
+                                          /*
+                                           * new
+                                           * RowsWithHolesInMostHoledColumn()
+                                           */100,
+                                          /* new AverageSquaredTroughHeight() */15,
+                                          /* new BlocksAboveHoles() */2 };
 
-    public FinalRater() {
+    public FinalRater()
+    {
         // System.out.println("new final rater:");
         // String temp;`
         // for(int i=0; i<raters.length; i++) {
@@ -49,27 +48,30 @@ public class FinalRater extends BoardRater {
         // }
     }
 
-    public FinalRater(final double[] c) {
-        if (c.length != FinalRater.raters.length) {
-            System.out
-                    .println("Make sure that the array passed into the FinalRater has the correct number of coefficients! Using DEFAULT COEFFICIENTS instead!");
+    public FinalRater(final double[] c)
+    {
+        if (c.length != FinalRater.raters.length)
+        {
+            System.out.println("Make sure that the array passed into the FinalRater has the correct number of coefficients! Using DEFAULT COEFFICIENTS instead!");
             return;
         }
         this.coefficients = c;
     }
 
     @Override
-    double rate(final Board board) {
+    double rate(final Board board)
+    {
         double score = 0, temp;
-        for (int x = 0; x < raters.length; x++) {
-            score += (temp = this.coefficients[x]) == 0 ? 0 : temp
-                    * FinalRater.raters[x].rate(board);
+        for (int x = 0; x < FinalRater.raters.length; x++)
+        {
+            score += (temp = this.coefficients[x]) == 0 ? 0 : temp * FinalRater.raters[x].rate(board);
             // System.out.print(this.coefficients[x]);
         }
         return score;
     }
 
-    double rate(final Board board, final double[] coefficients) {
+    double rate(final Board board, final double[] coefficients)
+    {
         final double[] temp = this.coefficients;
         this.coefficients = coefficients;
         final double ret = this.rate(board);

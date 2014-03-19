@@ -12,13 +12,16 @@ import tetris.Board;
  * 
  * @author justinbehymer
  */
-public class HeightVar extends BoardRater {
+public class HeightVar extends BoardRater
+{
     @Override
-    double rate(final Board board) {
+    double rate(final Board board)
+    {
         int sumHeight = 0;
 
         // count the holes and sum up the height
-        for (int x = 0; x < board.getWidth(); x++) {
+        for (int x = 0; x < board.getWidth(); x++)
+        {
             final int colHeight = board.getColumnHeight(x);
             sumHeight += colHeight;
         }
@@ -27,7 +30,8 @@ public class HeightVar extends BoardRater {
 
         // first variance
         int varisum = 0;
-        for (int x = 0; x < board.getWidth(); x++) {
+        for (int x = 0; x < board.getWidth(); x++)
+        {
             final int colHeight = board.getColumnHeight(x);
             varisum += Math.pow(colHeight - avgHeight, 2);
         }

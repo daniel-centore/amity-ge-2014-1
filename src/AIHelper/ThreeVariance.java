@@ -12,14 +12,16 @@ import tetris.Board;
  * 
  * @author justinbehymer
  */
-public class ThreeVariance extends BoardRater {
+public class ThreeVariance extends BoardRater
+{
     @Override
-    double rate(final Board board) {
+    double rate(final Board board)
+    {
         final int w = board.getWidth();
         double runningVarianceSum = 0.0;
-        for (int i = 0; i < w - 2; i++) {
-            double h0 = board.getColumnHeight(i), h1 = board
-                    .getColumnHeight(i + 1), h2 = board.getColumnHeight(i + 2);
+        for (int i = 0; i < w - 2; i++)
+        {
+            double h0 = board.getColumnHeight(i), h1 = board.getColumnHeight(i + 1), h2 = board.getColumnHeight(i + 2);
             final double m = (h0 + h1 + h2) / 3.0;
             h0 -= m;
             h1 -= m;

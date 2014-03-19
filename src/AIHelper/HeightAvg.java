@@ -12,13 +12,16 @@ import tetris.Board;
  * 
  * @author justinbehymer
  */
-public class HeightAvg extends BoardRater {
+public class HeightAvg extends BoardRater
+{
 
     @Override
-    double rate(final Board board) {
+    double rate(final Board board)
+    {
         int sumHeight = 0;
         // count the holes and sum up the heights
-        for (int x = 0; x < board.getWidth(); x++) {
+        for (int x = 0; x < board.getWidth(); x++)
+        {
             final int colHeight = board.getColumnHeight(x);
             sumHeight += colHeight;
         }

@@ -10,7 +10,8 @@ package tetris;
  * 
  * @author justinbehymer
  */
-public class Move {
+public class Move
+{
 
     // move is used as a struct to store a single move
 
