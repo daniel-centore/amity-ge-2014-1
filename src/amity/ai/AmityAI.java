@@ -30,9 +30,9 @@ public class AmityAI implements AI
     public Move bestMove(final Board board, final Piece piece, final Piece nextPiece, final int limitHeight)
     {
         double bestScore = 1e20;
-        int bestX = 0;
-        int bestY = 0;
-        Piece bestPiece = piece;
+        int bestX = -1;
+        int bestY = -1;
+        Piece bestPiece = null;
 
         Piece current = piece;
         Piece next = nextPiece;

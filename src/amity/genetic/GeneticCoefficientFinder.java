@@ -25,7 +25,7 @@ public class GeneticCoefficientFinder
     static final double             RANDOM               = .10;
     static final int                COEFFICIENTS         = 13;
     private static final double     MUTATION_RANGE       = .15;
-//    static final int                ASSUME_AVERAGE       = 100000;                // When the number is so large you just assume it's the average to save time
+    // static final int ASSUME_AVERAGE = 100000; // When the number is so large you just assume it's the average to save time
 
     private static Random           rand                 = new Random();
     private static TetrisController controller           = new TetrisController();
@@ -174,8 +174,8 @@ public class GeneticCoefficientFinder
             int game = quickGame(coefficients);
             System.out.print(game + " ");
 
-//            if (game > ASSUME_AVERAGE)
-//                return game;
+            // if (game > ASSUME_AVERAGE)
+            // return game;
 
             sum += game;
         }
@@ -195,11 +195,18 @@ public class GeneticCoefficientFinder
         {
             Move move = ai.bestMove(new Board(tc.board), tc.currentMove.piece, tc.nextPiece, tc.board.getHeight() - TetrisController.TOP_SPACE);
 
-            while (!tc.currentMove.piece.equals(move.piece))
-                tc.tick(TetrisController.ROTATE);
-            while (tc.currentMove.x != move.x)
-                tc.tick(((tc.currentMove.x < move.x) ? TetrisController.RIGHT : TetrisController.LEFT));
+            if (move != null)
+            {
+                while (!tc.currentMove.piece.equals(move.piece))
+                {
+                    tc.tick(TetrisController.ROTATE);
+                }
 
+                while (tc.currentMove.x != move.x)
+                {
+                    tc.tick(((tc.currentMove.x < move.x) ? TetrisController.RIGHT : TetrisController.LEFT));
+                }
+            }
             int current_count = tc.count;
 
             while ((current_count == tc.count) && tc.gameOn)
