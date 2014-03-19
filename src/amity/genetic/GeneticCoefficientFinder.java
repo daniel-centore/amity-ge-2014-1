@@ -11,64 +11,117 @@ import amity.ai.AmityAI;
 public class GeneticCoefficientFinder
 {
 	static final int POPULATION_SIZE = 50;
-	static final int COEFFICIENTS = 13;
-	static final int AVG_CALCULATING_N = 10;
-	static final double ELITIST = .05;
+	static final int AVG_CALCULATING_N = 7;
+	static final double ELITIST = .10;
 	static final int PARENTS = 3;
 	static final int STD_DEVIATIONS = 3;
-	//static final double MUTATION_PROBABILITY = .05;
+	static final double MUTATION_PROBABILITY = .15;
+	static final double RANDOM = .15;
+	static final int COEFFICIENTS = 13;
 
 	public static void main(String args[])
 	{
 		List<Individual> population = new ArrayList<>();
-		
+
 		// Create the initial population
 		for (int i = 0; i < POPULATION_SIZE; i++)
 		{
 			Individual indiv = new Individual();
-			
+
 			indiv.coefficients = generateRandomCoefficients(COEFFICIENTS);
 			indiv.moves = avgMoves(indiv.coefficients);
-			
-			System.out.println(i + " " + indiv.moves);		//
-			
+
+			System.out.println(i + " " + indiv.moves); //
+
 			population.add(indiv);
 		}
-		
-		Collections.sort(population);		// sort
-		
+
+		Collections.sort(population); // sort
+
+		System.out.println("Avg moves: " + calculateAvgMoves(population));
 		System.out.println(population);
-		
+
 		// Iterate forever
 		while (true)
 		{
 			List<Individual> newPopulation = new ArrayList<>();
-			
+
 			// Add elitists in
 			int number = (int) (ELITIST * POPULATION_SIZE);
 			for (int i = 0; i < number; i++)
 				newPopulation.add(population.get(number));
 			
+			// Throw a couple random ones in
+			number = (int) (RANDOM * POPULATION_SIZE);
+			for (int i = 0; i < number; i++)
+			{
+				Individual indiv = new Individual();
+
+				indiv.coefficients = generateRandomCoefficients(COEFFICIENTS);
+				indiv.moves = avgMoves(indiv.coefficients);
+
+				System.out.println(newPopulation.size() + " " + indiv.moves);
+
+				newPopulation.add(indiv);
+			}
+			
 			// Have sex
 			for (int i = newPopulation.size(); i < POPULATION_SIZE; i++)
 			{
+				// Choose fit parents
 				List<Individual> parents = new ArrayList<>();
 				for (int j = 0; j < PARENTS; j++)
 				{
 					int element = (int) Math.abs(rand.nextGaussian() * (POPULATION_SIZE / STD_DEVIATIONS));
 					if (element >= POPULATION_SIZE)
 						element = POPULATION_SIZE - 1;
-					
+
 					parents.add(population.get(element));
 				}
-				
-				
+
+				// Mix those parents
+				double[] newCoefs = new double[COEFFICIENTS];
+				for (Individual ind : parents)
+				{
+					for (int k = 0; k < COEFFICIENTS; k++)
+						newCoefs[k] += ind.coefficients[k];
+				}
+				for (int k = 0; k < COEFFICIENTS; k++)
+					newCoefs[k] /= PARENTS;
+
+				// Mutation
+				for (int k = 0; k < COEFFICIENTS; k++)
+				{
+					boolean mutate = rand.nextInt((int) (1 / MUTATION_PROBABILITY)) == 0;
+
+					if (mutate)
+						newCoefs[k] = rand.nextDouble();
+				}
+
+				Individual newIndiv = new Individual();
+				newIndiv.coefficients = newCoefs;
+				newIndiv.moves = avgMoves(newIndiv.coefficients);
+
+				System.out.println(newPopulation.size() + " " + newIndiv.moves);
+				newPopulation.add(newIndiv);
 			}
-			
+
 			// Prepare for next iteration
 			population = newPopulation;
 			Collections.sort(population);
+
+			System.out.println("Avg moves: " + calculateAvgMoves(population));
+			System.out.println(population);
 		}
+	}
+
+	public static int calculateAvgMoves(List<Individual> pop)
+	{
+		int moves = 0;
+		for (int i = 0; i < pop.size(); i++)
+			moves += pop.get(i).moves;
+
+		return moves / pop.size();
 	}
 
 	static Random rand = new Random();
@@ -102,12 +155,12 @@ class Individual implements Comparable<Individual>
 	@Override
 	public String toString()
 	{
-		return "Individual [coefficients=" + Arrays.toString(coefficients) + ", moves=" + moves + "]";
+		return "Individual [moves=" + moves + ", coefficients=" + Arrays.toString(coefficients) + "]";
 	}
 
 	@Override
 	public int compareTo(Individual o)
 	{
-		return moves - o.moves;
+		return -(moves - o.moves); // Puts bigger numbers earlier
 	}
 }

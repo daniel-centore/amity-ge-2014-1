@@ -9,11 +9,8 @@ package amity.genetic;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.KeyStroke;
-
 import tetris.AI;
 import tetris.Board;
-import tetris.ITLPAI;
 import tetris.Move;
 import tetris.TetrisController;
 
