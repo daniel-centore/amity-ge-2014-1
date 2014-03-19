@@ -14,12 +14,7 @@ import tetris.Board;
  */
 public class FinalRater extends BoardRater
 {
-    public static BoardRater raters[]     = // staticness prevents these raters
-                                            // from getting instantiated over
-                                            // and over and over and over
-                                            // again... this'll save garbage
-                                            // collection time.
-                                          { new ConsecHorzHoles(), new HeightAvg(), new HeightMax(), new HeightMinMax(), new HeightVar(), new HeightStdDev(), new SimpleHoles(), new ThreeVariance(), new Through(), new WeightedHoles(), new RowsWithHolesInMostHoledColumn(), new AverageSquaredTroughHeight(), new BlocksAboveHoles() };
+    public static BoardRater raters[]     = { new ConsecHorzHoles(), new HeightAvg(), new HeightMax(), new HeightMinMax(), new HeightVar(), new HeightStdDev(), new SimpleHoles(), new ThreeVariance(), new Through(), new WeightedHoles(), new RowsWithHolesInMostHoledColumn(), new AverageSquaredTroughHeight(), new BlocksAboveHoles() };
 
     public double[]          coefficients = {
                                           /* new ConsecHorzHoles(), */0,

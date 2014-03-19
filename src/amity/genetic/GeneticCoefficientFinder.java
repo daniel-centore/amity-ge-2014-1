@@ -9,7 +9,8 @@ import java.util.Random;
 
 import amity.ai.AmityAI;
 
-public class GeneticCoefficientFinder {
+public class GeneticCoefficientFinder
+{
     static final int    POPULATION_SIZE      = 50;
     static final int    AVG_CALCULATING_N    = 7;
     static final double ELITIST              = .10;
@@ -18,11 +19,13 @@ public class GeneticCoefficientFinder {
     static final double RANDOM               = .15;
     static final int    COEFFICIENTS         = 13;
 
-    public static void main(String args[]) {
+    public static void main(String args[])
+    {
         List<Individual> population = new ArrayList<>();
 
         // Create the initial population
-        for (int i = 0; i < POPULATION_SIZE; i++) {
+        for (int i = 0; i < POPULATION_SIZE; i++)
+        {
             Individual indiv = new Individual();
 
             indiv.coefficients = generateRandomCoefficients(COEFFICIENTS);
@@ -39,7 +42,8 @@ public class GeneticCoefficientFinder {
         System.out.println(population);
 
         // Iterate forever
-        while (true) {
+        while (true)
+        {
             List<Individual> newPopulation = new ArrayList<>();
 
             // Add elitists in
@@ -70,7 +74,7 @@ public class GeneticCoefficientFinder {
                     element = POPULATION_SIZE - 1;
 
                 Individual parent1 = population.get(element);
-                
+
                 element = (int) Math.abs(rand.nextGaussian() * (POPULATION_SIZE / STD_DEVIATIONS));
                 if (element >= POPULATION_SIZE)
                     element = POPULATION_SIZE - 1;
@@ -79,7 +83,7 @@ public class GeneticCoefficientFinder {
 
                 // Mix the parents
                 double[] newCoefs = new double[COEFFICIENTS];
-               
+
                 for (int k = 0; k < COEFFICIENTS; k++)
                 {
                     if (rand.nextBoolean())
@@ -89,7 +93,8 @@ public class GeneticCoefficientFinder {
                 }
 
                 // Mutation
-                for (int k = 0; k < COEFFICIENTS; k++) {
+                for (int k = 0; k < COEFFICIENTS; k++)
+                {
                     boolean mutate = rand.nextInt((int) (1 / MUTATION_PROBABILITY)) == 0;
 
                     if (mutate)
@@ -124,7 +129,8 @@ public class GeneticCoefficientFinder {
 
     static Random rand = new Random();
 
-    public static double[] generateRandomCoefficients(int count) {
+    public static double[] generateRandomCoefficients(int count)
+    {
         double[] d = new double[count];
 
         for (int i = 0; i < d.length; i++)
@@ -143,15 +149,15 @@ public class GeneticCoefficientFinder {
             runners.add(runner);
             runner.startGame();
         }
-        
+
         while (!runners.isEmpty())
         {
             Iterator<TetrisGameRunner> itr = runners.iterator();
-            
+
             while (itr.hasNext())
             {
                 TetrisGameRunner runner = itr.next();
-                
+
                 if (!runner.running())
                 {
                     sum += runner.getCount();
@@ -159,32 +165,36 @@ public class GeneticCoefficientFinder {
                     itr.remove();
                 }
             }
-            
-            try {
+
+            try
+            {
                 Thread.sleep(10);
             }
-            catch (InterruptedException e) {
+            catch (InterruptedException e)
+            {
             }
         }
-            //sum += new TetrisGameRunner(new AmityAI(coefficients)).getResult();
+        // sum += new TetrisGameRunner(new AmityAI(coefficients)).getResult();
 
         return sum / AVG_CALCULATING_N;
     }
 
 }
 
-class Individual implements Comparable<Individual> {
+class Individual implements Comparable<Individual>
+{
     double[] coefficients; // 13
     int      moves;
 
     @Override
-    public String toString() {
-        return "Individual [moves=" + moves + ", coefficients="
-                + Arrays.toString(coefficients) + "]";
+    public String toString()
+    {
+        return "Individual [moves=" + moves + ", coefficients=" + Arrays.toString(coefficients) + "]";
     }
 
     @Override
-    public int compareTo(Individual o) {
+    public int compareTo(Individual o)
+    {
         return -(moves - o.moves); // Puts bigger numbers earlier
     }
 }
