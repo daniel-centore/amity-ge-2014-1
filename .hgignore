@@ -1,0 +1,7 @@
+# glob syntax should be easier to understand than regex
+syntax: glob
+
+# only check in source
+bin
+dist
+*.class
