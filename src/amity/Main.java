@@ -6,14 +6,12 @@ import tetris.RunTetris;
 /**
  * 
  * @author drdanielfc
- *
+ * 
  */
-public class Main
-{
-	public static void main(String args[])
-	{
-		RunTetris.load(new ITLPAI());
-		// RunTetris.load(new AmityAI());
-	}
+public class Main {
+    public static void main(final String args[]) {
+        RunTetris.load(new ITLPAI());
+        // RunTetris.load(new AmityAI());
+    }
 
 }

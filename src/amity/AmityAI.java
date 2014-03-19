@@ -1,26 +1,25 @@
 package amity;
 
-import AIHelper.BoardRater;
 import tetris.AI;
 import tetris.Board;
 import tetris.Move;
 import tetris.Piece;
 
-public class AmityAI implements AI
-{
+import AIHelper.BoardRater;
 
-	@Override
-	public Move bestMove(Board board, Piece piece, Piece nextPiece, int limitHeight)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+public class AmityAI implements AI {
 
-	@Override
-	public void setRater(BoardRater r)
-	{
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public Move bestMove(final Board board, final Piece piece,
+            final Piece nextPiece, final int limitHeight) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setRater(final BoardRater r) {
+        // TODO Auto-generated method stub
+
+    }
 
 }

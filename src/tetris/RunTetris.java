@@ -1,7 +1,7 @@
 /*
  * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template file, choose Tools | Templates and open the template
+ * in the editor.
  */
 
 package tetris;
@@ -29,444 +29,392 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
- *
+ * 
  * @author justinbehymer
  */
 
-public class RunTetris extends JComponent
-{
+public class RunTetris extends JComponent {
 
-	private static final long serialVersionUID = 1L;
+    private static final long   serialVersionUID = 1L;
 
-	protected PiecePanel nextPiecePanel; // Displays the nextPiece for the player to see
+    protected PiecePanel        nextPiecePanel;        // Displays the
+                                                        // nextPiece for the
+                                                        // player to see
 
-	// Controls
-	protected JLabel countLabel;
-	protected JLabel timeLabel;
-	protected JButton startButton;
-	protected JButton stopButton;
-	protected javax.swing.Timer timer;
-	protected JSlider speed;
-	protected JLabel rowsClearedLabel;
-	protected JSlider Diffcult;
-	protected JLabel difficulty;
+    // Controls
+    protected JLabel            countLabel;
+    protected JLabel            timeLabel;
+    protected JButton           startButton;
+    protected JButton           stopButton;
+    protected javax.swing.Timer timer;
+    protected JSlider           speed;
+    protected JLabel            rowsClearedLabel;
+    protected JSlider           Diffcult;
+    protected JLabel            difficulty;
 
-	// milliseconds per tick
-	public final int DELAY = 400;
+    // milliseconds per tick
+    public final int            DELAY            = 400;
 
-	// used to measure elapsed time
-	protected long startTime;
+    // used to measure elapsed time
+    protected long              startTime;
 
-	TetrisController tc;
+    TetrisController            tc;
 
-	RunTetris(int width, int height)
-	{
-		super();
+    RunTetris(final int width, final int height) {
+        super();
 
-		setPreferredSize(new Dimension(width, height));
+        this.setPreferredSize(new Dimension(width, height));
 
-		tc = new TetrisController();
+        this.tc = new TetrisController();
 
-		// Create the Timer object and have it send
-		timer = new javax.swing.Timer(DELAY, new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				tick(TetrisController.DOWN);
-			}
-		});
-	}
+        // Create the Timer object and have it send
+        this.timer = new javax.swing.Timer(this.DELAY, new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                RunTetris.this.tick(TetrisController.DOWN);
+            }
+        });
+    }
 
-	void tick(int verb)
-	{
-		tc.tick(verb);
+    void tick(final int verb) {
+        this.tc.tick(verb);
 
-		if (!tc.gameOn)
-		{
-			stopGame();
-		}
+        if (!this.tc.gameOn) {
+            this.stopGame();
+        }
 
-		countLabel.setText(Integer.toString(tc.count) + " Moves");
-		rowsClearedLabel.setText(tc.rowsCleared + " Rows Cleared");
-		// difficulty.setText(Integer.toString(tc.difficulty));
-		nextPiecePanel.setPiece(tc.nextPiece);
+        this.countLabel.setText(Integer.toString(this.tc.count) + " Moves");
+        this.rowsClearedLabel.setText(this.tc.rowsCleared + " Rows Cleared");
+        // difficulty.setText(Integer.toString(tc.difficulty));
+        this.nextPiecePanel.setPiece(this.tc.nextPiece);
 
-		repaint();
-	}
+        this.repaint();
+    }
 
-	/**
-	 Sets the internal state and starts the timer
-	 so the game is happening.
-	*/
-	public void startGame()
-	{
-		tc.startGame();
+    /**
+     * Sets the internal state and starts the timer so the game is happening.
+     */
+    public void startGame() {
+        this.tc.startGame();
 
-		// draw the new board state once
-		repaint();
+        // draw the new board state once
+        this.repaint();
 
-		enableButtons();
-		timeLabel.setText(" ");
+        this.enableButtons();
+        this.timeLabel.setText(" ");
 
-		timer.start();
-		startTime = System.currentTimeMillis();
+        this.timer.start();
+        this.startTime = System.currentTimeMillis();
 
-		// LEFT
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						tick(TetrisController.LEFT);
-					}
-				}, "left", KeyStroke.getKeyStroke('4'), WHEN_IN_FOCUSED_WINDOW);
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						tick(TetrisController.LEFT);
-					}
-				}, "left", KeyStroke.getKeyStroke('a'), WHEN_IN_FOCUSED_WINDOW);
-		// RIGHT
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						tick(TetrisController.RIGHT);
-					}
-				}, "right", KeyStroke.getKeyStroke('6'), WHEN_IN_FOCUSED_WINDOW);
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						tick(TetrisController.RIGHT);
-					}
-				}, "right", KeyStroke.getKeyStroke('d'), WHEN_IN_FOCUSED_WINDOW);
-		// ROTATE
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						tick(TetrisController.ROTATE);
-					}
-				}, "rotate", KeyStroke.getKeyStroke('5'), WHEN_IN_FOCUSED_WINDOW);
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						tick(TetrisController.ROTATE);
-					}
-				}, "rotate", KeyStroke.getKeyStroke('w'), WHEN_IN_FOCUSED_WINDOW);
-		// DROP
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						tick(TetrisController.DROP);
-					}
-				}, "drop", KeyStroke.getKeyStroke('0'), WHEN_IN_FOCUSED_WINDOW);
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-						tick(TetrisController.DROP);
-					}
-				}, "drop", KeyStroke.getKeyStroke('s'), WHEN_IN_FOCUSED_WINDOW);
+        // LEFT
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                RunTetris.this.tick(TetrisController.LEFT);
+            }
+        }, "left", KeyStroke.getKeyStroke('4'), WHEN_IN_FOCUSED_WINDOW);
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                RunTetris.this.tick(TetrisController.LEFT);
+            }
+        }, "left", KeyStroke.getKeyStroke('a'), WHEN_IN_FOCUSED_WINDOW);
+        // RIGHT
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                RunTetris.this.tick(TetrisController.RIGHT);
+            }
+        }, "right", KeyStroke.getKeyStroke('6'), WHEN_IN_FOCUSED_WINDOW);
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                RunTetris.this.tick(TetrisController.RIGHT);
+            }
+        }, "right", KeyStroke.getKeyStroke('d'), WHEN_IN_FOCUSED_WINDOW);
+        // ROTATE
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                RunTetris.this.tick(TetrisController.ROTATE);
+            }
+        }, "rotate", KeyStroke.getKeyStroke('5'), WHEN_IN_FOCUSED_WINDOW);
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                RunTetris.this.tick(TetrisController.ROTATE);
+            }
+        }, "rotate", KeyStroke.getKeyStroke('w'), WHEN_IN_FOCUSED_WINDOW);
+        // DROP
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                RunTetris.this.tick(TetrisController.DROP);
+            }
+        }, "drop", KeyStroke.getKeyStroke('0'), WHEN_IN_FOCUSED_WINDOW);
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                RunTetris.this.tick(TetrisController.DROP);
+            }
+        }, "drop", KeyStroke.getKeyStroke('s'), WHEN_IN_FOCUSED_WINDOW);
 
-	}
+    }
 
-	/**
-	 Sets the enabling of the start/stop buttons
-	 based on the gameOn state.
-	*/
-	private void enableButtons()
-	{
-		startButton.setEnabled(!tc.gameOn);
-		stopButton.setEnabled(tc.gameOn);
-	}
+    /**
+     * Sets the enabling of the start/stop buttons based on the gameOn state.
+     */
+    private void enableButtons() {
+        this.startButton.setEnabled(!this.tc.gameOn);
+        this.stopButton.setEnabled(this.tc.gameOn);
+    }
 
-	/**
-	 Stops the game.
-	*/
-	public void stopGame()
-	{
-		tc.gameOn = false;
-		enableButtons();
-		timer.stop();
+    /**
+     * Stops the game.
+     */
+    public void stopGame() {
+        this.tc.gameOn = false;
+        this.enableButtons();
+        this.timer.stop();
 
-		long delta = (System.currentTimeMillis() - startTime) / 10;
-		timeLabel.setText(Double.toString(delta / 100.0) + " seconds");
-		// LEFT
-		registerKeyboardAction(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-			}
-		}, "left", KeyStroke.getKeyStroke('4'), WHEN_IN_FOCUSED_WINDOW);
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-					}
-				}, "left", KeyStroke.getKeyStroke('a'), WHEN_IN_FOCUSED_WINDOW);
-		// RIGHT
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-					}
-				}, "right", KeyStroke.getKeyStroke('6'), WHEN_IN_FOCUSED_WINDOW);
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-					}
-				}, "right", KeyStroke.getKeyStroke('d'), WHEN_IN_FOCUSED_WINDOW);
-		// ROTATE
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-					}
-				}, "rotate", KeyStroke.getKeyStroke('5'), WHEN_IN_FOCUSED_WINDOW);
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-					}
-				}, "rotate", KeyStroke.getKeyStroke('w'), WHEN_IN_FOCUSED_WINDOW);
-		// DROP
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-					}
-				}, "drop", KeyStroke.getKeyStroke('0'), WHEN_IN_FOCUSED_WINDOW);
-		registerKeyboardAction(
-				new ActionListener()
-				{
-					public void actionPerformed(ActionEvent e)
-					{
-					}
-				}, "drop", KeyStroke.getKeyStroke('s'), WHEN_IN_FOCUSED_WINDOW);
-	}
+        final long delta = (System.currentTimeMillis() - this.startTime) / 10;
+        this.timeLabel.setText(Double.toString(delta / 100.0) + " seconds");
+        // LEFT
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+            }
+        }, "left", KeyStroke.getKeyStroke('4'), WHEN_IN_FOCUSED_WINDOW);
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+            }
+        }, "left", KeyStroke.getKeyStroke('a'), WHEN_IN_FOCUSED_WINDOW);
+        // RIGHT
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+            }
+        }, "right", KeyStroke.getKeyStroke('6'), WHEN_IN_FOCUSED_WINDOW);
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+            }
+        }, "right", KeyStroke.getKeyStroke('d'), WHEN_IN_FOCUSED_WINDOW);
+        // ROTATE
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+            }
+        }, "rotate", KeyStroke.getKeyStroke('5'), WHEN_IN_FOCUSED_WINDOW);
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+            }
+        }, "rotate", KeyStroke.getKeyStroke('w'), WHEN_IN_FOCUSED_WINDOW);
+        // DROP
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+            }
+        }, "drop", KeyStroke.getKeyStroke('0'), WHEN_IN_FOCUSED_WINDOW);
+        this.registerKeyboardAction(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+            }
+        }, "drop", KeyStroke.getKeyStroke('s'), WHEN_IN_FOCUSED_WINDOW);
+    }
 
-	// width in pixels of a block
-	private final float dX()
-	{
-		return (((float) (getWidth() - 2)) / tc.board.getWidth());
-	}
+    // width in pixels of a block
+    private final float dX() {
+        return (float) (this.getWidth() - 2) / this.tc.board.getWidth();
+    }
 
-	// height in pixels of a block
-	private final float dY()
-	{
-		return (((float) (getHeight() - 2)) / tc.board.getHeight());
-	}
+    // height in pixels of a block
+    private final float dY() {
+        return (float) (this.getHeight() - 2) / this.tc.board.getHeight();
+    }
 
-	// the x pixel coord of the left side of a block
-	private final int xPixel(int x)
-	{
-		return (Math.round(1 + (x * dX())));
-	}
+    // the x pixel coord of the left side of a block
+    private final int xPixel(final int x) {
+        return Math.round(1 + x * this.dX());
+    }
 
-	// the y pixel coord of the top of a block
-	private final int yPixel(int y)
-	{
-		return (Math.round(getHeight() - 1 - (y + 1) * dY()));
-	}
+    // the y pixel coord of the top of a block
+    private final int yPixel(final int y) {
+        return Math.round(this.getHeight() - 1 - (y + 1) * this.dY());
+    }
 
-	/**
-	 Draws the current board with a 1 pixel border
-	 around the whole thing. 
-	*/
-	public void paintComponent(Graphics g)
-	{
+    /**
+     * Draws the current board with a 1 pixel border around the whole thing.
+     */
+    @Override
+    public void paintComponent(final Graphics g) {
 
-		// Draw a rect around the whole thing
-		g.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
+        // Draw a rect around the whole thing
+        g.fillRect(0, 0, this.getWidth() - 1, this.getHeight() - 1);
 
-		// Draw the line separating the top
-		int spacerY = yPixel(tc.displayBoard.getHeight() - TetrisController.TOP_SPACE - 1);
-		g.setColor(Color.WHITE);
-		g.drawLine(0, spacerY, getWidth() - 1, spacerY);
+        // Draw the line separating the top
+        final int spacerY = this.yPixel(this.tc.displayBoard.getHeight()
+                - TetrisController.TOP_SPACE - 1);
+        g.setColor(Color.WHITE);
+        g.drawLine(0, spacerY, this.getWidth() - 1, spacerY);
 
-		// Factor a few things out to help the optimizer
-		final int dx = Math.round(dX() - 2);
-		final int dy = Math.round(dY() - 2);
-		final int bWidth = tc.displayBoard.getWidth();
+        // Factor a few things out to help the optimizer
+        final int dx = Math.round(this.dX() - 2);
+        final int dy = Math.round(this.dY() - 2);
+        final int bWidth = this.tc.displayBoard.getWidth();
 
-		int x, y;
-		// Loop through and draw all the blocks
-		// left-right, bottom-top
-		for (x = 0; x < bWidth; x++)
-		{
-			int left = xPixel(x); // the left pixel
+        int x, y;
+        // Loop through and draw all the blocks
+        // left-right, bottom-top
+        for (x = 0; x < bWidth; x++) {
+            final int left = this.xPixel(x); // the left pixel
 
-			// draw from 0 up to the col height
-			final int yHeight = tc.displayBoard.getColumnHeight(x);
-			for (y = 0; y < yHeight; y++)
-			{
-				if (tc.displayBoard.getGrid(x, y))
-				{
-					g.setColor(tc.displayBoard.colorGrid[x][y]);
-					g.fillRect(left + 1, yPixel(y) + 1, dx, dy);
+            // draw from 0 up to the col height
+            final int yHeight = this.tc.displayBoard.getColumnHeight(x);
+            for (y = 0; y < yHeight; y++) {
+                if (this.tc.displayBoard.getGrid(x, y)) {
+                    g.setColor(this.tc.displayBoard.colorGrid[x][y]);
+                    g.fillRect(left + 1, this.yPixel(y) + 1, dx, dy);
 
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 
-	/**
-	 Updates the timer to reflect the current setting of the 
-	 speed slider.
-	*/
-	public void updateTimer()
-	{
-		double value = ((double) speed.getValue()) / speed.getMaximum();
-		timer.setDelay((int) (DELAY - value * DELAY));
-	}
+    /**
+     * Updates the timer to reflect the current setting of the speed slider.
+     */
+    public void updateTimer() {
+        final double value = (double) this.speed.getValue()
+                / this.speed.getMaximum();
+        this.timer.setDelay((int) (this.DELAY - value * this.DELAY));
+    }
 
-	/**
-	 *Creates the panel of UI controls.
-	*/
-	public java.awt.Container createControlPanel()
-	{
-		java.awt.Container panel = Box.createVerticalBox();
+    /**
+     * Creates the panel of UI controls.
+     */
+    public java.awt.Container createControlPanel() {
+        final java.awt.Container panel = Box.createVerticalBox();
 
-		nextPiecePanel = new PiecePanel();
-		panel.add(nextPiecePanel);
+        this.nextPiecePanel = new PiecePanel();
+        panel.add(this.nextPiecePanel);
 
-		// COUNT
-		countLabel = new JLabel("0" + " Moves");
-		panel.add(countLabel);
+        // COUNT
+        this.countLabel = new JLabel("0" + " Moves");
+        panel.add(this.countLabel);
 
-		// ROWS Cleared
-		rowsClearedLabel = new JLabel("0" + " Rows CLeared");
-		panel.add(rowsClearedLabel);
+        // ROWS Cleared
+        this.rowsClearedLabel = new JLabel("0" + " Rows CLeared");
+        panel.add(this.rowsClearedLabel);
 
-		difficulty = new JLabel();
-		panel.add(difficulty);
+        this.difficulty = new JLabel();
+        panel.add(this.difficulty);
 
-		// TIME
-		timeLabel = new JLabel(" ");
-		panel.add(timeLabel);
+        // TIME
+        this.timeLabel = new JLabel(" ");
+        panel.add(this.timeLabel);
 
-		panel.add(Box.createVerticalStrut(12));
+        panel.add(Box.createVerticalStrut(12));
 
-		// START button
-		startButton = new JButton("Start");
-		panel.add(startButton);
-		startButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				startGame();
-			}
-		});
+        // START button
+        this.startButton = new JButton("Start");
+        panel.add(this.startButton);
+        this.startButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                RunTetris.this.startGame();
+            }
+        });
 
-		// STOP button
-		stopButton = new JButton("Stop");
-		panel.add(stopButton);
-		stopButton.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				stopGame();
-			}
-		});
+        // STOP button
+        this.stopButton = new JButton("Stop");
+        panel.add(this.stopButton);
+        this.stopButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                RunTetris.this.stopGame();
+            }
+        });
 
-		enableButtons();
+        this.enableButtons();
 
-		JPanel row = new JPanel();
+        final JPanel row = new JPanel();
 
-		// SPEED slider
-		panel.add(Box.createVerticalStrut(12));
-		row.add(new JLabel("Speed:"));
-		speed = new JSlider(0, DELAY, 75); // min, max, current
-		speed.setPreferredSize(new Dimension(100, 15));
+        // SPEED slider
+        panel.add(Box.createVerticalStrut(12));
+        row.add(new JLabel("Speed:"));
+        this.speed = new JSlider(0, this.DELAY, 75); // min, max, current
+        this.speed.setPreferredSize(new Dimension(100, 15));
 
-		updateTimer();
-		row.add(speed);
+        this.updateTimer();
+        row.add(this.speed);
 
-		panel.add(row);
-		speed.addChangeListener(new ChangeListener()
-		{
-			// when the slider changes, sync the timer to its value
-			public void stateChanged(ChangeEvent e)
-			{
-				updateTimer();
-			}
+        panel.add(row);
+        this.speed.addChangeListener(new ChangeListener() {
+            // when the slider changes, sync the timer to its value
+            @Override
+            public void stateChanged(final ChangeEvent e) {
+                RunTetris.this.updateTimer();
+            }
 
-		});
+        });
 
-		return (panel);
-	}
+        return panel;
+    }
 
-	/**
-	 Creates a Window
-	*/
-	public static void load(AI brain)
+    /**
+     * Creates a Window
+     */
+    public static void load(final AI brain)
 
-	{
-		final JFrame frame = new JFrame("TETRIS CSC");
-		JComponent container = (JComponent) frame.getContentPane();
-		container.setLayout(new BorderLayout());
+    {
+        final JFrame frame = new JFrame("TETRIS CSC");
+        final JComponent container = (JComponent) frame.getContentPane();
+        container.setLayout(new BorderLayout());
 
-		// Set the metal look and feel
-		try
-		{
-			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-		} catch (Exception ignored)
-		{
-		}
+        // Set the metal look and feel
+        try {
+            UIManager.setLookAndFeel(UIManager
+                    .getCrossPlatformLookAndFeelClassName());
+        }
+        catch (final Exception ignored) {
+        }
 
-		final int pixels = 20;
-		RunTetris tetris = new RunTetrisAI(TetrisController.WIDTH * pixels + 2, (TetrisController.HEIGHT + TetrisController.TOP_SPACE) * pixels + 2, brain);
+        final int pixels = 20;
+        final RunTetris tetris = new RunTetrisAI(TetrisController.WIDTH
+                * pixels + 2,
+                (TetrisController.HEIGHT + TetrisController.TOP_SPACE) * pixels
+                        + 2, brain);
 
-		container.add(tetris, BorderLayout.CENTER);
+        container.add(tetris, BorderLayout.CENTER);
 
-		Container panel = tetris.createControlPanel();
+        final Container panel = tetris.createControlPanel();
 
-		// Add the quit button last so it's at the bottom
-		panel.add(Box.createVerticalStrut(12));
-		JButton quit = new JButton("Quit");
-		panel.add(quit);
-		quit.addActionListener(new ActionListener()
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				System.exit(0);
-			}
-		});
+        // Add the quit button last so it's at the bottom
+        panel.add(Box.createVerticalStrut(12));
+        final JButton quit = new JButton("Quit");
+        panel.add(quit);
+        quit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                System.exit(0);
+            }
+        });
 
-		container.add(panel, BorderLayout.EAST);
-		frame.pack();
-		frame.setVisible(true);
+        container.add(panel, BorderLayout.EAST);
+        frame.pack();
+        frame.setVisible(true);
 
-		// Quit on window close
-		frame.addWindowListener(
-				new WindowAdapter()
-				{
-					public void windowClosing(WindowEvent e)
-					{
-						System.exit(0);
-					}
-				}
-				);
+        // Quit on window close
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(final WindowEvent e) {
+                System.exit(0);
+            }
+        });
 
-	}
+    }
 
 }
