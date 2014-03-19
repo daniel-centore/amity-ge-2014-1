@@ -1,7 +1,9 @@
 package tetris;
+
 // Board.java
 //package Hw2;
 import java.awt.Point;
+import java.util.Arrays;
 
 /**
  * Represents a Tetris board -- essentially a 2-d grid of booleans. Supports
@@ -15,77 +17,118 @@ import java.awt.Point;
  * @author Nick Parlante
  * @version 1.0, Mar 1, 2001
  */
-public class Board {
+public class Board
+{
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(grid);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Board other = (Board) obj;
+		if (!Arrays.deepEquals(grid, other.grid))
+			return false;
+		return true;
+	}
+
 	protected int width; // width of the board
 	protected int height;
-  private boolean caching = false;
+	private boolean caching = false;
 	protected boolean[][] grid;
-  
+
 	/**
 	 * Creates an empty board of the given width and height measured in blocks.
 	 */
-	public Board(int aWidth, int aHeight) {
+	public Board(int aWidth, int aHeight)
+	{
 		width = aWidth;
 		height = aHeight;
 
 		grid = new boolean[width][height];
-		
-		for (int x = 0; x < width; x++) {
-			for (int y = 0; y < height; y++) {
+
+		for (int x = 0; x < width; x++)
+		{
+			for (int y = 0; y < height; y++)
+			{
 				grid[x][y] = false;
 			}
 		}
 	}
-	
-	public Board(Board o) {
+
+	public Board(Board o)
+	{
 		this(o.width, o.height);
-		
-		for(int x = 0; x < width; x++){
-			for(int y = 0; y < height; y++){
-					grid[x][y] = o.grid[x][y];
+
+		for (int x = 0; x < width; x++)
+		{
+			for (int y = 0; y < height; y++)
+			{
+				grid[x][y] = o.grid[x][y];
 			}
 		}
 	}
-	
-	public Board clone() {
+
+	public Board clone()
+	{
 		Board cloned = new Board(width, height);
-		
-		for(int x = 0; x < width; x++){
-			for(int y = 0; y < height; y++){
-					cloned.grid[x][y] = grid[x][y];
+
+		for (int x = 0; x < width; x++)
+		{
+			for (int y = 0; y < height; y++)
+			{
+				cloned.grid[x][y] = grid[x][y];
 			}
 		}
-		
+
 		return cloned;
 	}
 
-  public void makeDirty() {
-    maxHeightDirty = true;
-    for(int i=0; i<10; i++) {
-      columnHeightDirties[i] = true;
-    }
-  }
+	public void makeDirty()
+	{
+		maxHeightDirty = true;
+		for (int i = 0; i < 10; i++)
+		{
+			columnHeightDirties[i] = true;
+		}
+	}
 
-  //CACHING CAN ONLY BE ENABLED WHILE A BOARDRATER IS READING THE BOARD. I couldn't figure out where to mark the caches as outdated, so I just make sure caching is only enabled in read-only situations.
-  public void enableCaching() {
-    caching = true;
-    makeDirty();
-  }
-  public void disableCaching() {
-    caching = false;
-  }
+	// CACHING CAN ONLY BE ENABLED WHILE A BOARDRATER IS READING THE BOARD. I couldn't figure out where to mark the caches as outdated, so I just make sure caching is only enabled in read-only situations.
+	public void enableCaching()
+	{
+		caching = true;
+		makeDirty();
+	}
+
+	public void disableCaching()
+	{
+		caching = false;
+	}
 
 	/**
 	 * Returns the width of the board in blocks.
 	 */
-	public int getWidth() {
+	public int getWidth()
+	{
 		return width;
 	}
 
 	/**
 	 * Returns the height of the board in blocks.
 	 */
-	public int getHeight() {
+	public int getHeight()
+	{
 		return height;
 	}
 
@@ -95,11 +138,15 @@ public class Board {
 	 */
 	private boolean maxHeightDirty = true;
 	private int _maxHeight = -1;
-	public int getMaxHeight() {
-    if(caching && !maxHeightDirty) return _maxHeight;
-	  maxHeightDirty = false;
+
+	public int getMaxHeight()
+	{
+		if (caching && !maxHeightDirty)
+			return _maxHeight;
+		maxHeightDirty = false;
 		int max = 0;
-		for (int i = 0; i < width; i++) {
+		for (int i = 0; i < width; i++)
+		{
 			if (getColumnHeight(i) > max)
 				max = getColumnHeight(i);
 		}
@@ -115,15 +162,18 @@ public class Board {
 	 * Implementation: use the skirt and the col heights to compute this fast --
 	 * O(skirt length).
 	 */
-	public int dropHeight(Piece piece, int x) {
+	public int dropHeight(Piece piece, int x)
+	{
 		int high = 10000;
 		int result = 0;
 		int temp;
 		int i;
 		int[] skirt = piece.getSkirt();
-		for (i = x; i < x + piece.getWidth(); i++) {
+		for (i = x; i < x + piece.getWidth(); i++)
+		{
 			temp = skirt[i - x] - getColumnHeight(i);
-			if (temp < high) {
+			if (temp < high)
+			{
 				high = temp;
 				result = i;
 			}
@@ -135,33 +185,41 @@ public class Board {
 	 * Returns the height of the given column -- i.e. the y value of the highest
 	 * block + 1. The height is 0 if the column contains no blocks.
 	 */
-	private boolean[] columnHeightDirties = {true,true,true,true,true,true,true,true,true,true};
-	private int[] _columnHeights = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
-	public int getColumnHeight(int x) {
-      if(caching && !columnHeightDirties[x]) {
-        return _columnHeights[x];
-      }
-      columnHeightDirties[x] = false;
-			for (int j = height - 1; j >= 0; j--) {
-				if (grid[x][j]) {
-					return (_columnHeights[x] = j+1);
-				}
+	private boolean[] columnHeightDirties = { true, true, true, true, true, true, true, true, true, true };
+	private int[] _columnHeights = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+
+	public int getColumnHeight(int x)
+	{
+		if (caching && !columnHeightDirties[x])
+		{
+			return _columnHeights[x];
+		}
+		columnHeightDirties[x] = false;
+		for (int j = height - 1; j >= 0; j--)
+		{
+			if (grid[x][j])
+			{
+				return (_columnHeights[x] = j + 1);
 			}
-			return (_columnHeights[x] = 0);
+		}
+		return (_columnHeights[x] = 0);
 	}
 
 	/**
 	 * Returns the number of filled blocks in the given row.
 	 */
-	public int getRowCount(int y) {
+	public int getRowCount(int y)
+	{
 		int count = 0;
-		
-		for (int x = 0; x < width; x++) {
-			if (grid[x][y]) {
+
+		for (int x = 0; x < width; x++)
+		{
+			if (grid[x][y])
+			{
 				count++;
 			}
 		}
-		
+
 		return count;
 	}
 
@@ -170,7 +228,8 @@ public class Board {
 	 * the valid width/height area always return true.
 	 * 
 	 */
-	public final boolean getGrid(int x, int y) {
+	public final boolean getGrid(int x, int y)
+	{
 		if (x < 0 || x > width)
 			return true;
 		if (y < 0 || y > height)
@@ -178,39 +237,47 @@ public class Board {
 		return grid[x][y];
 	}
 
-	public boolean canPlace(Piece piece, int x, int y) {
+	public boolean canPlace(Piece piece, int x, int y)
+	{
 		// might as well do all the error checking at once, since we must leave
 		// the board unchanged if we've got
 		// an out of bounds error - this has the added bonus of not altering the
 		// board on a bad place
-		for (Point block : piece.getBody()) {
+		for (Point block : piece.getBody())
+		{
 			int putx = x + block.x;
 			int puty = y + block.y;
-			
-			if (putx < 0 
-					|| putx >= width 
-					|| puty < 0 
-					|| ((puty < height) && grid[putx][puty])) {
+
+			if (putx < 0
+					|| putx >= width
+					|| puty < 0
+					|| ((puty < height) && grid[putx][puty]))
+			{
 				return false;
 			}
 		}
 		return true;
 	}
-	
-	public boolean canPlace(Move move) {
+
+	public boolean canPlace(Move move)
+	{
 		return canPlace(move.piece, move.x, move.y);
 	}
-	
-	public void place(Piece piece, int x, int y) {
-		if (!canPlace(piece, x, y)) {
+
+	public void place(Piece piece, int x, int y)
+	{
+		if (!canPlace(piece, x, y))
+		{
 			return;
 		}
-		for (Point block : piece.getBody()) {
+		for (Point block : piece.getBody())
+		{
 			grid[x + block.x][y + block.y] = true;
 		}
 	}
-	
-	public void place(Move move) {
+
+	public void place(Move move)
+	{
 		place(move.piece, move.x, move.y);
 	}
 
@@ -223,14 +290,18 @@ public class Board {
 	 * down to its correct location in one pass. Note that more than one row may
 	 * be filled.
 	 */
-	public int clearRows() {
+	public int clearRows()
+	{
 		int cleared = 0;
 
-		for (int i = 0; i < height; i++) {
-			if (getRowCount(i) >= width) {
+		for (int i = 0; i < height; i++)
+		{
+			if (getRowCount(i) >= width)
+			{
 				cleared++;
 
-				for (int j = 0; j < width; j++) {
+				for (int j = 0; j < width; j++)
+				{
 					System
 							.arraycopy(grid[j], i + 1, grid[j], i, height - 1
 									- i);

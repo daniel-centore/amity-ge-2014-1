@@ -6,6 +6,8 @@
 
 package tetris;
 
+import java.util.Arrays;
+
 import javax.swing.Box;
 
 /**
@@ -59,8 +61,13 @@ public class RunTetrisAI extends RunTetris
 			mMove = mBrain.bestMove(new Board(tc.board), tc.currentMove.piece, tc.nextPiece, tc.board.getHeight() - TetrisController.TOP_SPACE);
 		}
 
+//		System.out.println(Arrays.toString(tc.currentMove.piece.getBody()));
+//		System.out.println(Arrays.toString(mMove.piece.getBody()));
+		
+		
 		if (!tc.currentMove.piece.equals(mMove.piece))
 		{
+//			System.out.println("rotate");
 			super.tick(TetrisController.ROTATE);
 		}
 		else if (tc.currentMove.x != mMove.x)
@@ -71,6 +78,8 @@ public class RunTetrisAI extends RunTetris
 		{
 			return true;
 		}
+		
+//		System.out.println();
 		return false;
 	}
 

@@ -59,7 +59,7 @@ public class RunTetris extends JComponent
 
 	TetrisController tc;
 
-	RunTetris(int width, int height)
+	public RunTetris(int width, int height)
 	{
 		super();
 
@@ -419,7 +419,6 @@ public class RunTetris extends JComponent
 	 Creates a Window
 	*/
 	public static void load(AI brain)
-
 	{
 		final JFrame frame = new JFrame("TETRIS CSC");
 		JComponent container = (JComponent) frame.getContentPane();
@@ -434,7 +433,15 @@ public class RunTetris extends JComponent
 		}
 
 		final int pixels = 20;
-		RunTetris tetris = new RunTetrisAI(TetrisController.WIDTH * pixels + 2, (TetrisController.HEIGHT + TetrisController.TOP_SPACE) * pixels + 2, brain);
+		RunTetris tetris = null;
+		if (brain == null)
+		{
+			tetris = new RunTetris(TetrisController.WIDTH * pixels + 2, (TetrisController.HEIGHT + TetrisController.TOP_SPACE) * pixels + 2);
+		}
+		else
+		{
+			tetris = new RunTetrisAI(TetrisController.WIDTH * pixels + 2, (TetrisController.HEIGHT + TetrisController.TOP_SPACE) * pixels + 2, brain);
+		}
 
 		container.add(tetris, BorderLayout.CENTER);
 

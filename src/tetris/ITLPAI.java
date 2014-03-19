@@ -58,6 +58,7 @@ public Move bestMove(Board board, Piece piece, Piece nextPiece, int limitHeight)
 		move.x = bestX;
 		move.y = bestY;
 		move.piece = bestPiece;
+		
 		return (move);
 }
 
