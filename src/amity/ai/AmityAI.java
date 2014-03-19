@@ -91,10 +91,14 @@ public class AmityAI implements AI
             current = current.nextRotation();
         } while (current != piece);
 
+        if (bestPiece == null)
+            return null;
+
         Move move = new Move();
         move.x = bestX;
         move.y = bestY;
         move.piece = bestPiece;
+
         return (move);
     }
 
