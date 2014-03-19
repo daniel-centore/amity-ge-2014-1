@@ -4,6 +4,8 @@ import tetris.RunTetris;
 
 import amity.ai.AmityAI;
 
+// import amity.ai.MagicalAI;
+
 /**
  * 
  * @author drdanielfc
@@ -17,6 +19,7 @@ public class Main
 
         // RunTetris.load(new ITLPAI());
         RunTetris.load(new AmityAI());
+        // RunTetris.load(new MagicalAI());
 
         // TetrisGameRunner run = new TetrisGameRunner(new ITLPAI());
         //
