@@ -25,7 +25,7 @@ public class GeneticCoefficientFinder
     static final double             RANDOM               = .10;
     static final int                COEFFICIENTS         = 13;
     private static final double     MUTATION_RANGE       = .15;
-    static final int                ASSUME_AVERAGE       = 100000;                // When the number is so large you just assume it's the average to save time
+//    static final int                ASSUME_AVERAGE       = 100000;                // When the number is so large you just assume it's the average to save time
 
     private static Random           rand                 = new Random();
     private static TetrisController controller           = new TetrisController();
@@ -174,8 +174,8 @@ public class GeneticCoefficientFinder
             int game = quickGame(coefficients);
             System.out.print(game + " ");
 
-            if (game > ASSUME_AVERAGE)
-                return game;
+//            if (game > ASSUME_AVERAGE)
+//                return game;
 
             sum += game;
         }
