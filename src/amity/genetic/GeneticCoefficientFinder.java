@@ -7,20 +7,40 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import tetris.AI;
+import tetris.Board;
+import tetris.ITLPAI;
+import tetris.Move;
+import tetris.TetrisController;
+
 import amity.ai.AmityAI;
 
 public class GeneticCoefficientFinder
 {
-    static final int    POPULATION_SIZE      = 50;
-    static final int    AVG_CALCULATING_N    = 7;
-    static final double ELITIST              = .10;
-    static final int    STD_DEVIATIONS       = 3;
-    static final double MUTATION_PROBABILITY = .15;
-    static final double RANDOM               = .15;
-    static final int    COEFFICIENTS         = 13;
+    static final int                POPULATION_SIZE      = 30;
+    static final int                AVG_CALCULATING_N    = 4;
+    static final double             ELITIST              = .10;
+    static final int                STD_DEVIATIONS       = 3;
+    static final double             MUTATION_PROBABILITY = .50;
+    static final double             RANDOM               = .10;
+    static final int                COEFFICIENTS         = 13;
+    private static final double     MUTATION_RANGE       = .15;
+    static final int                ASSUME_AVERAGE       = 100000;                // When the number is so large you just assume it's the average to save time
+
+    private static Random           rand                 = new Random();
+    private static TetrisController controller           = new TetrisController();
 
     public static void main(String args[])
     {
+        try
+        {
+            Thread.sleep(100);          // let the TetrisController wake up
+        }
+        catch (InterruptedException e)
+        {
+        }
+        RunTetrisGeneticView.load(controller);
+
         List<Individual> population = new ArrayList<>();
 
         // Create the initial population
@@ -47,11 +67,17 @@ public class GeneticCoefficientFinder
             List<Individual> newPopulation = new ArrayList<>();
 
             // Add elitists in
+            System.out.println("Elitists");
             int number = (int) (ELITIST * POPULATION_SIZE);
             for (int i = 0; i < number; i++)
-                newPopulation.add(population.get(number));
+            {
+                Individual indiv = population.get(i);
+                System.out.println(i + " " + indiv.moves);
+                newPopulation.add(indiv);
+            }
 
             // Throw a couple random ones in
+            System.out.println("Randoms");
             number = (int) (RANDOM * POPULATION_SIZE);
             for (int i = 0; i < number; i++)
             {
@@ -66,6 +92,7 @@ public class GeneticCoefficientFinder
             }
 
             // Have sex
+            System.out.println("Sex");
             for (int i = newPopulation.size(); i < POPULATION_SIZE; i++)
             {
                 // Choose fit parents
@@ -98,7 +125,7 @@ public class GeneticCoefficientFinder
                     boolean mutate = rand.nextInt((int) (1 / MUTATION_PROBABILITY)) == 0;
 
                     if (mutate)
-                        newCoefs[k] = rand.nextDouble();
+                        newCoefs[k] += (rand.nextDouble() * MUTATION_RANGE * 2 - MUTATION_RANGE);
                 }
 
                 Individual newIndiv = new Individual();
@@ -127,8 +154,6 @@ public class GeneticCoefficientFinder
         return moves / pop.size();
     }
 
-    static Random rand = new Random();
-
     public static double[] generateRandomCoefficients(int count)
     {
         double[] d = new double[count];
@@ -141,44 +166,47 @@ public class GeneticCoefficientFinder
 
     public static int avgMoves(double[] coefficients)
     {
-        List<TetrisGameRunner> runners = new ArrayList<>();
+        System.out.println(Arrays.toString(coefficients));
+        System.out.print("{");
         int sum = 0;
         for (int i = 0; i < AVG_CALCULATING_N; i++)
         {
-            TetrisGameRunner runner = new TetrisGameRunner(new AmityAI(coefficients));
-            runners.add(runner);
-            runner.startGame();
+            int game = quickGame(coefficients);
+            System.out.print(game + " ");
+
+            if (game > ASSUME_AVERAGE)
+                return game;
+
+            sum += game;
         }
-
-        while (!runners.isEmpty())
-        {
-            Iterator<TetrisGameRunner> itr = runners.iterator();
-
-            while (itr.hasNext())
-            {
-                TetrisGameRunner runner = itr.next();
-
-                if (!runner.running())
-                {
-                    sum += runner.getCount();
-                    runner.stopGame();
-                    itr.remove();
-                }
-            }
-
-            try
-            {
-                Thread.sleep(10);
-            }
-            catch (InterruptedException e)
-            {
-            }
-        }
-        // sum += new TetrisGameRunner(new AmityAI(coefficients)).getResult();
+        System.out.print("} ");
 
         return sum / AVG_CALCULATING_N;
     }
 
+    private static int quickGame(double[] coef)
+    {
+        TetrisController tc = controller;
+        tc.startGame();
+
+        AI ai = new AmityAI(coef);
+
+        while (tc.gameOn)
+        {
+            Move move = ai.bestMove(new Board(tc.board), tc.currentMove.piece, tc.nextPiece, tc.board.getHeight() - TetrisController.TOP_SPACE);
+
+            while (!tc.currentMove.piece.equals(move.piece))
+                tc.tick(TetrisController.ROTATE);
+            while (tc.currentMove.x != move.x)
+                tc.tick(((tc.currentMove.x < move.x) ? TetrisController.RIGHT : TetrisController.LEFT));
+
+            int current_count = tc.count;
+
+            while ((current_count == tc.count) && tc.gameOn)
+                tc.tick(TetrisController.DOWN);
+        }
+        return tc.count;
+    }
 }
 
 class Individual implements Comparable<Individual>

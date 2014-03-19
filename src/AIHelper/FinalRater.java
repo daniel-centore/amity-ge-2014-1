@@ -16,23 +16,26 @@ public class FinalRater extends BoardRater
 {
     public static BoardRater raters[]     = { new ConsecHorzHoles(), new HeightAvg(), new HeightMax(), new HeightMinMax(), new HeightVar(), new HeightStdDev(), new SimpleHoles(), new ThreeVariance(), new Through(), new WeightedHoles(), new RowsWithHolesInMostHoledColumn(), new AverageSquaredTroughHeight(), new BlocksAboveHoles() };
 
-    public double[]          coefficients = {
-                                          /* new ConsecHorzHoles(), */0,
-                                          /* new HeightAvg(), */10,
-                                          /* new HeightMax(), */1,
-                                          /* new HeightMinMax(), */1,
-                                          /* new HeightVar(), */0,
-                                          /* new HeightStdDev(), */5,
-                                          /* new SimpleHoles(), */40,
-                                          /* new ThreeVariance(), */10,
-                                          /* new Trough(), */1,
-                                          /* new WeightedHoles(), */4,
-                                          /*
-                                           * new
-                                           * RowsWithHolesInMostHoledColumn()
-                                           */100,
-                                          /* new AverageSquaredTroughHeight() */15,
-                                          /* new BlocksAboveHoles() */2 };
+    
+//    public double[]          coefficients = {
+//                                          /* new ConsecHorzHoles(), */0,
+//                                          /* new HeightAvg(), */10,
+//                                          /* new HeightMax(), */1,
+//                                          /* new HeightMinMax(), */1,
+//                                          /* new HeightVar(), */0,
+//                                          /* new HeightStdDev(), */5,
+//                                          /* new SimpleHoles(), */40,
+//                                          /* new ThreeVariance(), */10,
+//                                          /* new Trough(), */1,
+//                                          /* new WeightedHoles(), */4,
+//                                          /*
+//                                           * new
+//                                           * RowsWithHolesInMostHoledColumn()
+//                                           */100,
+//                                          /* new AverageSquaredTroughHeight() */15,
+//                                          /* new BlocksAboveHoles() */2 };
+    
+    public double[] coefficients = {0.41430724103382527, 0.04413383739389207, 0.1420172532064692, -0.13881428312611474, 0.06887679285238696, -0.052368130931930074, 0.33235754477242435, 0.2851778629665227, -0.03011693088344261, -0.02534983335709433, 0.21155050264421074, 0.8292064267563932, 0.0038145282373974604};
 
     public FinalRater()
     {

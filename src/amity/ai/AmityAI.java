@@ -29,53 +29,73 @@ public class AmityAI implements AI
     @Override
     public Move bestMove(final Board board, final Piece piece, final Piece nextPiece, final int limitHeight)
     {
-        double bestScore = Double.MAX_VALUE;
+        double bestScore = 1e20;
+        int bestX = 0;
+        int bestY = 0;
+        Piece bestPiece = piece;
 
-        // Find all possible end positions, INCLUDING NEXT PIECE, including how
-        // to get there
-        final List<Movement> level1 = PossibleMoveGenerator.possibleBoards(board, piece, null, limitHeight);
-        final List<Movement> level2 = new ArrayList<>();
-        for (final Movement m : level1)
+        Piece current = piece;
+        Piece next = nextPiece;
+
+        // loop through all the rotations
+        do
         {
-            final List<Movement> sub1 = PossibleMoveGenerator.possibleBoards(m.board, nextPiece, m, limitHeight);
-            level2.addAll(sub1);
-        }
+            final int yBound = limitHeight - current.getHeight() + 1;
+            final int xBound = board.getWidth() - current.getWidth() + 1;
 
-        // Weigh all boards using algorithm
-
-        for (final Movement m : level2)
-        {
-            final double score = this.rater.rateBoard(m.board);
-
-            if (score < bestScore)
+            // For current rotation, try all the possible columns
+            for (int x = 0; x < xBound; x++)
             {
-                bestScore = score;
-                this.bestMovement = m;
+                int y = board.dropHeight(current, x);
+                if ((y < yBound) && board.canPlace(current, x, y))
+                {
+                    Board testBoard = new Board(board);
+                    testBoard.place(current, x, y);
+                    testBoard.clearRows();
+
+                    // Everything in this while loop evaluates possible moves
+                    // with the next piece
+                    do
+                    {
+                        final int jBound = limitHeight - next.getHeight() + 1;
+                        final int iBound = testBoard.getWidth() - next.getWidth() + 1;
+
+                        for (int i = 0; i < iBound; i++)
+                        {
+                            int j = testBoard.dropHeight(next, i);
+                            if (j < jBound && testBoard.canPlace(next, i, j))
+                            {
+                                Board temp = new Board(testBoard);
+                                temp.place(next, i, j);
+                                temp.clearRows();
+
+                                double nextScore = rater.rateBoard(temp);
+
+                                if (nextScore < bestScore)
+                                {
+                                    bestScore = nextScore;
+                                    bestX = x;
+                                    bestY = y;
+                                    bestPiece = current;
+                                }
+                            }
+
+                        }
+
+                        next = next.nextRotation();
+                    } while (next != nextPiece);
+                    // Back out to the current piece
+
+                }
             }
-        }
+            current = current.nextRotation();
+        } while (current != piece);
 
-        if (this.bestMovement == null)		// no possible option; give up :(
-        {
-            final Move m = new Move();
-            m.piece = piece;
-            m.x = 0;
-
-            return m;
-
-        }
-
-        // Use the lowest score
-        final Move m = new Move();
-        final Movement actual = this.bestMovement.upper;
-        m.piece = actual.piece;
-        m.x = actual.dropX;
-
-        if (actual.moveX == 0)
-        {
-            this.bestMovement = null;
-        }
-
-        return m;
+        Move move = new Move();
+        move.x = bestX;
+        move.y = bestY;
+        move.piece = bestPiece;
+        return (move);
     }
 
     @Override

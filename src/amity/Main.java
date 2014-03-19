@@ -17,7 +17,7 @@ public class Main
     {
         // RunTetris.load(null);
 
-        // RunTetris.load(new ITLPAI());
+//         RunTetris.load(new ITLPAI());
         RunTetris.load(new AmityAI());
 
         // TetrisGameRunner run = new TetrisGameRunner(new ITLPAI());
