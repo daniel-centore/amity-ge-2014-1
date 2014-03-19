@@ -1,6 +1,5 @@
 package amity;
 
-import tetris.ITLPAI;
 import tetris.RunTetris;
 
 /**
@@ -10,8 +9,7 @@ import tetris.RunTetris;
  */
 public class Main {
     public static void main(final String args[]) {
-        RunTetris.load(new ITLPAI());
-        // RunTetris.load(new AmityAI());
+        RunTetris.load(new AIRunner());
     }
 
 }
