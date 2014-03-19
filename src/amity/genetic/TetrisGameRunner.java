@@ -46,6 +46,25 @@ public class TetrisGameRunner
 
 	}
 	
+	public int getResult()
+	{
+		startGame();
+		
+		while (tc.gameOn)
+		{
+			try
+			{
+				Thread.sleep(1);
+			} catch (InterruptedException e)
+			{
+			}
+		}
+		
+		stopGame();
+		
+		return tc.count;
+	}
+	
 	public TetrisController getTc()
 	{
 		return tc;

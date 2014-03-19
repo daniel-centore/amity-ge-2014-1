@@ -42,7 +42,7 @@ public class FinalRater extends BoardRater
 			/*new ThreeVariance(),*/10,
 			/*new Trough(),*/1,
 			/*new WeightedHoles(),*/4,
-			/*new RowsWithHolesInMostHoledColumn()*/4,
+			/*new RowsWithHolesInMostHoledColumn()*/100,
 			/*new AverageSquaredTroughHeight()*/15,
 			/*new BlocksAboveHoles()*/2
 	};
