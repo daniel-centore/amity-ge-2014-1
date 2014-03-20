@@ -202,6 +202,8 @@ public class TetrisController
         // random difficulty
         this.difficulty = (int) (Math.random() * 100);
 
+        System.out.println(this.board.getMaxHeight());
+
         // move it up at the ceter top
         final Move newMove = new Move();
         newMove.piece = this.nextPiece;
