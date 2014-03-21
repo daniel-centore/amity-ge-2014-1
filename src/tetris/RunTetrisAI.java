@@ -8,7 +8,7 @@ package tetris;
 
 import javax.swing.Box;
 
-import amity.ai.AmityAI;
+import amity.AmityAI;
 
 /**
  *

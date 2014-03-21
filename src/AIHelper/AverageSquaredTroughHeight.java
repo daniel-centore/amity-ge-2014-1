@@ -38,5 +38,4 @@ public class AverageSquaredTroughHeight extends BoardRater {
 		}
 		return mostHolesInAnyColumn;
 	}
-    
 }
