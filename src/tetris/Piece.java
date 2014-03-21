@@ -7,6 +7,7 @@
 package tetris;
 
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.StringTokenizer;
@@ -26,6 +27,12 @@ public class Piece
 
     protected Point[]        body;
     private int[]            skirt;
+    @Override
+    public String toString()
+    {
+        return "Piece [body=" + Arrays.toString(this.body) + "]";
+    }
+
     int                      width;
     private int              height;
     protected Piece          next;  // "next" rotation

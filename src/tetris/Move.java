@@ -15,6 +15,11 @@ public class Move
 
     // move is used as a struct to store a single move
 
+    @Override
+    public String toString()
+    {
+        return "Move [x=" + this.x + ", y=" + this.y + ", piece=" + this.piece + "]";
+    }
     public int   x;
     public int   y;
     public Piece piece;
