@@ -4,7 +4,7 @@
  * in the editor.
  */
 
-package AIHelper;
+package amity.heuristic;
 
 import tetris.Board;
 
@@ -12,7 +12,7 @@ import tetris.Board;
  * 
  * @author justinbehymer
  */
-public class WeightedHoles extends BoardRater
+public class HeightMinMax extends BoardRater
 {
     @Override
     double rate(final Board board)
@@ -23,34 +23,21 @@ public class WeightedHoles extends BoardRater
         for (int x = 0; x < board.getWidth(); x++)
         {
             final int height = board.getColumnHeight(x);
+
             if (height > maxHeight)
             {
+                // record the height of highest coloumn
                 maxHeight = height;
             }
             if (height < minHeight)
             {
+                // record height of lowest coloumn
                 minHeight = height;
             }
+
         }
 
-        double weightedHoleCount = 0.0;
-        final int[] heights = new int[board.getWidth()];
-
-        for (int x = 0; x < board.getWidth(); x++)
-        {
-            heights[x] = board.getColumnHeight(x);
-            int y = heights[x] - 2;
-            while (y >= 0)
-            {
-                if (!board.getGrid(x, y))
-                {
-                    weightedHoleCount += (double) (maxHeight - y) / (double) maxHeight;
-                }
-                y--;
-            }
-        }
-
-        return weightedHoleCount;
-
+        return maxHeight - minHeight;
     }
+
 }

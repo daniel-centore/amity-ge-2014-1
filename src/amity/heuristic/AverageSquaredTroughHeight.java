@@ -4,46 +4,12 @@
  * in the editor.
  */
 
-package AIHelper;
+package amity.heuristic;
 
 import tetris.Board;
 
-/**
- * 
- * @author justinbehymer
- */
 public class AverageSquaredTroughHeight extends BoardRater
 {
-
-    // @Override
-    // double rate(final Board board)
-    // {
-    // // Count the holes, and sum up the heights
-    // int mostHolesInAnyColumn = 0;
-    // for (int x = 0; x < board.getWidth(); x++)
-    // {
-    // final int colHeight = board.getColumnHeight(x);
-    //
-    // int y = colHeight - 2;
-    // int holes = 0;
-    //
-    // while (y >= 0)
-    // {
-    // if (!board.getGrid(x, y))
-    // {
-    // holes++;
-    // }
-    // y--;
-    // }
-    //
-    // if (mostHolesInAnyColumn < holes)
-    // {
-    // mostHolesInAnyColumn = holes;
-    // }
-    // }
-    // return mostHolesInAnyColumn;
-    // }
-
     double rate(Board board)
     {
         int w = board.getWidth();

@@ -5,8 +5,7 @@ import tetris.Board;
 import tetris.Move;
 import tetris.Piece;
 
-import AIHelper.BoardRater;
-import AIHelper.FinalRater;
+import amity.heuristic.FinalRater;
 
 public class AmityAI implements AI
 {
@@ -106,9 +105,8 @@ public class AmityAI implements AI
     }
 
     @Override
-    public void setRater(final BoardRater r)
+    public void setRater(AIHelper.BoardRater r)
     {
-
     }
 
 }

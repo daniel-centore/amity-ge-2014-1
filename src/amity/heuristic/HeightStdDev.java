@@ -4,19 +4,19 @@
  * in the editor.
  */
 
-package tetris;
+package amity.heuristic;
 
-import AIHelper.BoardRater;
+import tetris.Board;
 
 /**
  * 
  * @author justinbehymer
  */
-public interface AI
+public class HeightStdDev extends BoardRater
 {
-
-    public Move bestMove(Board board, Piece piece, Piece nextPiece, int limitHeight);
-
-    public void setRater(BoardRater r);
-
+    @Override
+    double rate(final Board board)
+    {
+        return Math.sqrt(new HeightVar().rate(board));
+    }
 }

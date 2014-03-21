@@ -4,7 +4,7 @@
  * in the editor.
  */
 
-package AIHelper;
+package amity.heuristic;
 
 import tetris.Board;
 

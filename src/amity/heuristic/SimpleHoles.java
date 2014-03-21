@@ -4,7 +4,7 @@
  * in the editor.
  */
 
-package AIHelper;
+package amity.heuristic;
 
 import tetris.Board;
 
@@ -12,18 +12,19 @@ import tetris.Board;
  * 
  * @author justinbehymer
  */
-public class RowsWithHolesInMostHoledColumn extends BoardRater
+public class SimpleHoles extends BoardRater
 {
+
     @Override
     double rate(final Board board)
     {
-        // count the holes and sum up the heights
-        int mostHolesInAnyColumn = 0;
+        int holes = 0;
+        // Count the holes, and sum up the heights
         for (int x = 0; x < board.getWidth(); x++)
         {
             final int colHeight = board.getColumnHeight(x);
-            int y = colHeight - 2;
-            int holes = 0;
+
+            int y = colHeight - 2; // addr of first possible hole
 
             while (y >= 0)
             {
@@ -33,14 +34,8 @@ public class RowsWithHolesInMostHoledColumn extends BoardRater
                 }
                 y--;
             }
-
-            if (mostHolesInAnyColumn < holes)
-            {
-                mostHolesInAnyColumn = holes;
-            }
         }
-
-        return mostHolesInAnyColumn;
+        return holes;
     }
 
 }

@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.Field;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -24,14 +25,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
-import tetris.AI;
 import tetris.PiecePanel;
-import tetris.RunTetrisAI;
 import tetris.TetrisController;
 
 /**
@@ -119,6 +115,20 @@ public class RunTetrisGeneticView extends JComponent
     @Override
     public void paintComponent(final Graphics g)
     {
+        Color[][] colorGrid = null;
+        Field field;
+        try
+        {
+            field = this.tc.displayBoard.getClass().getDeclaredField("colorGrid");
+            field.setAccessible(true);
+            colorGrid = (Color[][]) field.get(this.tc.displayBoard);
+        }
+        catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+       
 
         // Draw a rect around the whole thing
         g.fillRect(0, 0, this.getWidth() - 1, this.getHeight() - 1);
@@ -146,7 +156,7 @@ public class RunTetrisGeneticView extends JComponent
             {
                 if (this.tc.displayBoard.getGrid(x, y))
                 {
-                    g.setColor(this.tc.displayBoard.colorGrid[x][y]);
+                    g.setColor(colorGrid[x][y]);//this.tc.displayBoard.colorGrid[x][y]);
                     g.fillRect(left + 1, this.yPixel(y) + 1, dx, dy);
 
                 }

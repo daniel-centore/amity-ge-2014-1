@@ -4,7 +4,7 @@
  * in the editor.
  */
 
-package AIHelper;
+package amity.heuristic;
 
 import tetris.Board;
 
@@ -12,21 +12,31 @@ import tetris.Board;
  * 
  * @author justinbehymer
  */
-public class HeightAvg extends BoardRater
+public class HeightVar extends BoardRater
 {
-
     @Override
     double rate(final Board board)
     {
         int sumHeight = 0;
-        // count the holes and sum up the heights
+
+        // count the holes and sum up the height
         for (int x = 0; x < board.getWidth(); x++)
         {
             final int colHeight = board.getColumnHeight(x);
             sumHeight += colHeight;
         }
 
-        return (double) sumHeight / board.getWidth();
-    }
+        final double avgHeight = (double) sumHeight / board.getWidth();
 
+        // first variance
+        int varisum = 0;
+        for (int x = 0; x < board.getWidth(); x++)
+        {
+            final int colHeight = board.getColumnHeight(x);
+            varisum += Math.pow(colHeight - avgHeight, 2);
+        }
+
+        return varisum / board.getWidth();
+
+    }
 }
