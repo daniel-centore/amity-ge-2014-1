@@ -1,8 +1,5 @@
 package amity.ai;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import tetris.AI;
 import tetris.Board;
 import tetris.Move;
@@ -14,7 +11,6 @@ import AIHelper.FinalRater;
 public class AmityAI implements AI
 {
     private final FinalRater rater;
-    private Movement         bestMovement;
 
     public AmityAI(final double[] coefficients)
     {
@@ -91,10 +87,17 @@ public class AmityAI implements AI
             current = current.nextRotation();
         } while (current != piece);
 
-        if (bestPiece == null)
-            return null;
-
         Move move = new Move();
+        
+        if (bestPiece == null)          // die in peace
+        {
+            move.x = 2;
+            move.y = 1;
+            move.piece = piece;
+            
+            return move;
+        }
+
         move.x = bestX;
         move.y = bestY;
         move.piece = bestPiece;

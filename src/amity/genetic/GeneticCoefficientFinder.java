@@ -3,13 +3,11 @@ package amity.genetic;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 import tetris.AI;
 import tetris.Board;
-import tetris.ITLPAI;
 import tetris.Move;
 import tetris.TetrisController;
 
@@ -28,17 +26,11 @@ public class GeneticCoefficientFinder
     // static final int ASSUME_AVERAGE = 100000; // When the number is so large you just assume it's the average to save time
 
     private static Random           rand                 = new Random();
-    private static TetrisController controller           = new TetrisController();
+    private static TetrisController controller;
 
     public static void main(String args[])
     {
-        try
-        {
-            Thread.sleep(100);          // let the TetrisController wake up
-        }
-        catch (InterruptedException e)
-        {
-        }
+        controller = new TetrisController();
         RunTetrisGeneticView.load(controller);
 
         List<Individual> population = new ArrayList<>();

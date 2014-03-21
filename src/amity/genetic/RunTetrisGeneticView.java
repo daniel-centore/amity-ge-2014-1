@@ -85,7 +85,7 @@ public class RunTetrisGeneticView extends JComponent
             }
         });
         
-        this.timer.start();
+//        this.timer.start();
     }
 
 
@@ -237,6 +237,8 @@ public class RunTetrisGeneticView extends JComponent
                 System.exit(0);
             }
         });
+        
+        tetris.timer.start();
 
     }
 
