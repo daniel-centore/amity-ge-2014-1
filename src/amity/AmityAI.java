@@ -181,6 +181,9 @@ class FinalRater extends BoardRater
         }
     }
 
+    /**
+     * These are the default raters and coefficients. The coefficients were generated using {@link GeneticCoefficientFinder}.
+     */
     // @formatter:off
     private static RaterPair[] DEFAULT_RATERS = {
         new RaterPair(0.41430724103382527, new ConsecHorzHoles()),
