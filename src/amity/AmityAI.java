@@ -34,7 +34,11 @@ import tetris.PiecePanel;
 import tetris.TetrisController;
 
 /**
- * The main Tetris AI class
+ * This is the main Tetris AI class for Amity High School.
+ * 
+ * Our algorithm is based heavily on the ITLP one, and uses a number of weighted heuristics to measure all possible theoretical board situations for the
+ * 
+ * current and next placed pieces.
  * 
  * @author Daniel Centore
  * 
@@ -78,7 +82,7 @@ public class AmityAI implements AI
             final int yBound = limitHeight - current.getHeight() + 1;
             final int xBound = board.getWidth() - current.getWidth() + 1;
 
-            // For current rotation, try all the possible columns
+            // For the current rotation, try all the possible columns
             for (int x = 0; x < xBound; x++)
             {
                 int y = board.dropHeight(current, x);
@@ -104,10 +108,10 @@ public class AmityAI implements AI
                                 temp.place(next, i, j);
                                 temp.clearRows();
 
-                                // Rate the difficulty of solving the board with the 2-piece combination
+                                // Rate the difficulty of solving the board with this 2-piece combination
                                 double nextScore = rater.rateBoard(temp);
 
-                                // If this board is simpler to solve than the last, then label the 1st move as the best
+                                // If this board is perceived as simpler to solve than the last (and thus, better), then label the 1st move as the new best
                                 if (nextScore < bestScore)
                                 {
                                     bestScore = nextScore;
@@ -279,34 +283,25 @@ class AverageSquaredTroughHeight extends BoardRater
 {
     public double rate(Board board)
     {
-        // Count the holes, and sum up the heights
-        int mostHolesInAnyColumn = 0;
-        for (int x = 0; x < board.getWidth(); x++)
+        int w = board.getWidth();
+        int[] troughs = new int[w];
+        int x = 0, temp, temp2, temp3;
+        troughs[0] = ((temp = board.getColumnHeight(1) - board.getColumnHeight(0)) > 0) ? temp : 0;
+        for (x = 1; x < w - 1; x++)
         {
-            final int colHeight = board.getColumnHeight(x);
-
-            int y = colHeight - 2;
-            int holes = 0;
-
-            while (y >= 0)
-            {
-                if (!board.getGrid(x, y))
-                {
-                    holes++;
-                }
-                y--;
-            }
-
-            if (mostHolesInAnyColumn < holes)
-                mostHolesInAnyColumn = holes;
+            troughs[x] = (temp = (((temp2 = (board.getColumnHeight(x + 1) - board.getColumnHeight(x))) > (temp3 = (board.getColumnHeight(x - 1) - board.getColumnHeight(x)))) ? temp3 : temp2)) > 0 ? temp : 0;
         }
-        return mostHolesInAnyColumn;
+        troughs[w - 1] = ((temp = board.getColumnHeight(w - 2) - board.getColumnHeight(w - 1)) > 0) ? temp : 0;
+        double average = 0.0;
+        for (x = 0; x < w; x++)
+            average += troughs[x] * troughs[x];
+        return average / w;
     }
+
 }
 
 class BlocksAboveHoles extends BoardRater
 {
-
     @Override
     public double rate(final Board board)
     {
@@ -1073,6 +1068,7 @@ class RunTetrisGeneticView extends JComponent
 
     /**
      * Loads a new copy of the GUI
+     * 
      * @param tc The TetrisController to monitor
      */
     public static void load(TetrisController tc)
