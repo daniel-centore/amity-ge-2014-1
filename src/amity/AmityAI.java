@@ -36,7 +36,7 @@ import tetris.TetrisController;
 /**
  * This is the main Tetris AI class for Amity High School.
  * 
- * Our algorithm is based heavily on the ITLP one, and uses a number of weighted heuristics to measure all possible theoretical board situations for the
+ * Our algorithm is based on the ITLP one, and uses a number of weighted heuristics to measure all possible theoretical board situations for the
  * 
  * current and next placed pieces.
  * 
@@ -82,7 +82,7 @@ public class AmityAI implements AI
             final int yBound = limitHeight - current.getHeight() + 1;
             final int xBound = board.getWidth() - current.getWidth() + 1;
 
-            // For the current rotation, try all the possible columns
+            // For the current rotation, try dropping from all the possible columns
             for (int x = 0; x < xBound; x++)
             {
                 int y = board.dropHeight(current, x);
@@ -98,7 +98,7 @@ public class AmityAI implements AI
                         final int jBound = limitHeight - next.getHeight() + 1;
                         final int iBound = testBoard.getWidth() - next.getWidth() + 1;
 
-                        // For current rotation, try all the possible columns
+                        // For the current rotation, try dropping from all the possible columns
                         for (int i = 0; i < iBound; i++)
                         {
                             int j = testBoard.dropHeight(next, i);
@@ -132,16 +132,16 @@ public class AmityAI implements AI
 
         Move move = new Move();
 
-        if (bestPiece == null)          // No possible way to stay alive; just send a move to give up
+        if (bestPiece == null)          // No possible way to stay alive; just send a move and give up
         {
-            move.x = 2;
-            move.y = 1;
+            move.x = (board.getWidth() - piece.getWidth()) / 2;
+            move.y = -1;
             move.piece = piece;
 
             return move;
         }
 
-        // Send the best known move onward
+        // Send the best known move
         move.x = bestX;
         move.y = bestY;
         move.piece = bestPiece;
@@ -152,7 +152,7 @@ public class AmityAI implements AI
     @Override
     public void setRater(AIHelper.BoardRater r)
     {
-        // We handle this on our own
+        // Unused function that the AI interface requires us to implement
     }
 }
 
@@ -189,23 +189,24 @@ class FinalRater extends BoardRater
      * These are the default raters and coefficients. The coefficients were generated using {@link GeneticCoefficientFinder}.
      */
     // @formatter:off
-    private static RaterPair[] DEFAULT_RATERS = {
-        new RaterPair(0.41430724103382527, new ConsecHorzHoles()),
-        new RaterPair(0.04413383739389207, new HeightAvg()),
-        new RaterPair(0.1420172532064692, new HeightMax()),
-        new RaterPair(-0.13881428312611474, new HeightMinMax()),
-        new RaterPair(0.06887679285238696, new HeightVar()),
+    private static final RaterPair[] DEFAULT_RATERS = {
+        new RaterPair(0.41430724103382527,   new ConsecHorzHoles()),
+        new RaterPair(0.04413383739389207,   new HeightAvg()),
+        new RaterPair(0.1420172532064692,    new HeightMax()),
+        new RaterPair(-0.13881428312611474,  new HeightMinMax()),
+        new RaterPair(0.06887679285238696,   new HeightVar()),
         new RaterPair(-0.052368130931930074, new HeightStdDev()),
-        new RaterPair(0.33235754477242435, new SimpleHoles()),
-        new RaterPair(0.2851778629665227, new ThreeVariance()),
-        new RaterPair(-0.03011693088344261, new Through()),
-        new RaterPair(-0.02534983335709433, new WeightedHoles()),
-        new RaterPair(0.21155050264421074, new RowsWithHolesInMostHoledColumn()),
-        new RaterPair(0.8292064267563932, new AverageSquaredTroughHeight()),
-        new RaterPair(0.0038145282373974604, new BlocksAboveHoles()) };
+        new RaterPair(0.33235754477242435,   new SimpleHoles()),
+        new RaterPair(0.2851778629665227,    new ThreeVariance()),
+        new RaterPair(-0.03011693088344261,  new Through()),
+        new RaterPair(-0.02534983335709433,  new WeightedHoles()),
+        new RaterPair(0.21155050264421074,   new RowsWithHolesInMostHoledColumn()),
+        new RaterPair(0.8292064267563932,    new AverageSquaredTroughHeight()),
+        new RaterPair(0.0038145282373974604, new BlocksAboveHoles())
+     };
      // @formatter:on
 
-    private RaterPair[]        raters;
+    private RaterPair[]              raters;
 
     /**
      * Initializes the {@link FinalRater} using the default rater coefficients
