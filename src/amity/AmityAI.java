@@ -65,9 +65,18 @@ public class AmityAI implements AI
         this.rater = new FinalRater();
     }
 
+    private Board testBoard = null;
+    private Board temp = null;
+
     @Override
     public Move bestMove(final Board board, final Piece piece, final Piece nextPiece, final int limitHeight)
     {
+        if (testBoard == null)
+        {
+            testBoard = new Board(board);
+            temp = new Board(board);
+        }
+        
         double bestScore = Double.MAX_VALUE;
         int bestX = -1;
         int bestY = -1;
@@ -88,7 +97,8 @@ public class AmityAI implements AI
                 int y = board.dropHeight(current, x);
                 if ((y < yBound) && board.canPlace(current, x, y))
                 {
-                    Board testBoard = new Board(board);
+                    //Board testBoard = new Board(board);
+                    testBoard.duplicate(board);
                     testBoard.place(current, x, y);
                     testBoard.clearRows();
 
@@ -104,7 +114,7 @@ public class AmityAI implements AI
                             int j = testBoard.dropHeight(next, i);
                             if (j < jBound && testBoard.canPlace(next, i, j))
                             {
-                                Board temp = new Board(testBoard);
+                               temp.duplicate(testBoard);
                                 temp.place(next, i, j);
                                 temp.clearRows();
 
@@ -197,7 +207,6 @@ class FinalRater extends BoardRater
         new RaterPair(0.5166052958097598,  new HeightMinMax()),
         new RaterPair(0.19427865718632464,   new HeightVar()),
         new RaterPair(-0.054743459627535324, new HeightStdDev()),
-        
         new RaterPair(0.9739233692440133,   new SimpleHoles()),
         new RaterPair(0.3108976644216631,    new ThreeVariance()),
         new RaterPair(0.5945106189776568,  new Through()),
@@ -450,10 +459,11 @@ class HeightMinMax extends BoardRater
 
 class HeightStdDev extends BoardRater
 {
+    static final HeightVar heightVar = new HeightVar();
     @Override
     public double rate(final Board board)
     {
-        return Math.sqrt(new HeightVar().rate(board));
+        return Math.sqrt(heightVar.rate(board));
     }
 }
 
@@ -844,6 +854,9 @@ class GeneticCoefficientFinder
         return sum / AVG_CALCULATING_N;
     }
 
+    static long bestMove = 0;
+    static long tick     = 0;
+
     /**
      * Runs a single game with a set of coefficients and returns the number of moves the AI made it
      * 
@@ -862,8 +875,11 @@ class GeneticCoefficientFinder
         // Run the game
         while (tc.gameOn)
         {
+            long t = System.currentTimeMillis();
             Move move = ai.bestMove(new Board(tc.board), tc.currentMove.piece, tc.nextPiece, tc.board.getHeight() - TetrisController.TOP_SPACE);
+            bestMove += System.currentTimeMillis() - t;
 
+            t = System.currentTimeMillis();
             while (!tc.currentMove.piece.equals(move.piece))
             {
                 tc.tick(TetrisController.ROTATE);
@@ -878,7 +894,10 @@ class GeneticCoefficientFinder
 
             while ((current_count == tc.count) && tc.gameOn)
                 tc.tick(TetrisController.DOWN);
+            tick += System.currentTimeMillis() - t;
         }
+
+        System.out.println("=====" + bestMove + " " + tick + "=====");
 
         return tc.count;
     }
