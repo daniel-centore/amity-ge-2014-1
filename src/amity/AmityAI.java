@@ -171,21 +171,6 @@ class FinalRater extends BoardRater
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // @formatter:off
     /**
      * The list of heuristics we will use to meaure the status of the board
@@ -199,7 +184,7 @@ class FinalRater extends BoardRater
         new HeightStdDev(),
         new SimpleHoles(),
         new ThreeVariance(),
-        new Through(),
+        new NotTrough(),
         new WeightedHoles(),
         new RowsWithHolesInMostHoledColumn(),
         new AverageSquaredTroughHeight(),
@@ -255,7 +240,9 @@ class FinalRater extends BoardRater
  * 
  * The following are the original heuristics from the project, but with AverageSquaredTroughHeight replaced with the original from tetris-ai
  * 
- * because the one included in the GE Tetris Project was incorrect.
+ * ( https://code.google.com/p/tetris-ai/ ) because the one included in the GE ITLP Project was incorrect. Commenting and some refactoring
+ * 
+ * was also performed but, with the exception of AverageSquaredTroughHeight, functionality was not changed from the included ones.
  * 
  * ========================================================================================================================================
  */
@@ -418,6 +405,7 @@ class HeightAvg extends BoardRater
     @Override
     public double rate(final Board board)
     {
+        // Find the sum of the individual column heights
         int sumHeight = 0;
         for (int x = 0; x < board.getWidth(); x++)
         {
@@ -425,6 +413,7 @@ class HeightAvg extends BoardRater
             sumHeight += colHeight;
         }
 
+        // Return the mean
         return (double) sumHeight / board.getWidth();
     }
 
@@ -564,7 +553,7 @@ class SimpleHoles extends BoardRater
     public double rate(final Board board)
     {
         int holes = 0;
-        
+
         // Iterate across the board
         for (int x = 0; x < board.getWidth(); x++)
         {
@@ -596,7 +585,7 @@ class ThreeVariance extends BoardRater
     {
         final int w = board.getWidth();
         double runningVarianceSum = 0.0;
-        
+
         // Iterate across the board
         for (int i = 0; i < w - 2; i++)
         {
@@ -604,83 +593,90 @@ class ThreeVariance extends BoardRater
             double h0 = board.getColumnHeight(i);
             double h1 = board.getColumnHeight(i + 1);
             double h2 = board.getColumnHeight(i + 2);
-            
+
             // Find the mean of those heights
             final double m = (h0 + h1 + h2) / 3.0;
-            
+
             // Find the difference between the mean and the actual for each of the three columns
             h0 -= m;
             h1 -= m;
             h2 -= m;
-            
+
             // Square them
             h0 *= h0;
             h1 *= h1;
             h2 *= h2;
-            
+
             // Find the variance, and add it to the running sum of variances
             runningVarianceSum += (h0 + h1 + h2) / 3.0;
         }
-        
+
         // Return the mean of those variances
         return runningVarianceSum / (w - 3);
     }
 }
 
-class Through extends BoardRater
+/**
+ * Counts the number of columns which have something in them
+ */
+class NotTrough extends BoardRater
 {
     @Override
     public double rate(final Board board)
     {
-        final int[] through = new int[board.getWidth()];
-        int troughCount = 0;
+        int colCount = 0;
 
+        // Iterate across the board
         for (int x = 0; x < board.getWidth(); x++)
         {
-            final int height = board.getColumnHeight(x);
-            // store the hieght for each coloumn
-            if (height > 0 && board.getGrid(x, height - 1))
-            {
-                through[x]++;
-                troughCount++;
-            }
+            // Add a column if it has anything in it
+            if (board.getColumnHeight(x) > 0)
+                colCount++;
         }
-        return troughCount;
+
+        return colCount;
     }
 }
 
+/**
+ * Comes up with a measure of the amount of holes, with a negative bias on lower holes, such that holes that are deeply buried are worse than holes near the surface
+ * 
+ * Each hole is multiplied by the difference in height between the tallest column and the hole height.
+ * 
+ * The number is then divided by the height of the tallest column which puts it on a scale between 0 and 1.
+ * 
+ * These numbers are then added up.
+ * 
+ */
 class WeightedHoles extends BoardRater
 {
     @Override
     public double rate(final Board board)
     {
+        // Find the column with the maximum height
         int maxHeight = 0;
-        int minHeight = board.getHeight();
 
         for (int x = 0; x < board.getWidth(); x++)
         {
             final int height = board.getColumnHeight(x);
             if (height > maxHeight)
-            {
                 maxHeight = height;
-            }
-            if (height < minHeight)
-            {
-                minHeight = height;
-            }
         }
 
         double weightedHoleCount = 0.0;
         final int[] heights = new int[board.getWidth()];
 
+        // Iterate over the board
         for (int x = 0; x < board.getWidth(); x++)
         {
             heights[x] = board.getColumnHeight(x);
-            int y = heights[x] - 2;
-            while (y >= 0)
+            int y = heights[x] - 2;           // The first possible position for a hole
+
+            while (y >= 0)      // Iterate down the column
             {
-                if (!board.getGrid(x, y))
+                if (!board.getGrid(x, y))       // For each hole,
                 {
+                    // Add the difference in height between the tallest column and the hole, put on a 0-1 scale based on the tallest column being 1
                     weightedHoleCount += (double) (maxHeight - y) / (double) maxHeight;
                 }
                 y--;
@@ -942,15 +938,15 @@ class GeneticCoefficientFinder
 }
 
 /**
- * A set of coefficients and the avg number of move those coefficients were recorded as performing
+ * A set of coefficients and the average number of move those coefficients were recorded as performing
  * 
  * @author Daniel Centore
  * 
  */
 class Individual implements Comparable<Individual>
 {
-    double[] coefficients;
-    int      moves;
+    double[] coefficients;      // Array of coefficients
+    int      moves;       // The average number of moves those coefficients resulted in
 
     @Override
     public String toString()
@@ -961,7 +957,7 @@ class Individual implements Comparable<Individual>
     @Override
     public int compareTo(Individual o)
     {
-        return -(moves - o.moves); // Puts bigger numbers earlier
+        return -(moves - o.moves); // Puts better individuals earlier
     }
 }
 
@@ -1017,8 +1013,6 @@ class RunTetrisGeneticView extends JComponent
                 RunTetrisGeneticView.this.repaint();
             }
         });
-
-        // this.timer.start();
     }
 
     // width in pixels of a block
@@ -1061,7 +1055,6 @@ class RunTetrisGeneticView extends JComponent
         }
         catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
