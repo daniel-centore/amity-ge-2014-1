@@ -218,11 +218,11 @@ class FinalRater extends BoardRater
 /**
  * ============================================================== Heuristics ==============================================================
  * 
- * The following are the original heuristics from the project, but with AverageSquaredTroughHeight replaced with the original from tetris-ai
+ * The following are the original heuristics from the ITLP project, but with AverageSquaredTroughHeight replaced with the original from
  * 
- * ( https://code.google.com/p/tetris-ai/ ) because the one included in the GE ITLP Project was incorrect. Commenting and some refactoring
+ * tetris-ai ( https://code.google.com/p/tetris-ai/ ) because the one included in the GE ITLP Project was incorrect. Commenting and some
  * 
- * was also performed but, with the exception of AverageSquaredTroughHeight, functionality was not changed from the included ones.
+ * refactoring was also performed but, with the exception of AverageSquaredTroughHeight, functionality was not changed from the included ones.
  * 
  * ========================================================================================================================================
  */
@@ -233,7 +233,7 @@ class FinalRater extends BoardRater
 abstract class BoardRater
 {
     /**
-     * Rates the board based on the overriding class
+     * Rates the difficulty of solving the current board based on a single heuristic
      * 
      * @param board The board used for rating
      * @return The rating
@@ -241,7 +241,7 @@ abstract class BoardRater
     abstract double rate(Board board);
 
     /**
-     * Rates the board, but enables caching first
+     * Rates the difficulty of solving the current board based on a single heuristic, but enables board caching first to speed things up
      * 
      * @param board The board used for rating
      * @return The rating
@@ -333,7 +333,7 @@ class BlocksAboveHoles extends BoardRater
 /**
  * Counts the number of holes which come immediately after a block in each column.
  * 
- * In other words, two empty vertical spaces beneath a block are only counted as one hole
+ * In other words, two (or more) empty vertical spaces beneath a block are only counted as one hole
  */
 class ConsecHorzHoles extends BoardRater
 {
@@ -350,7 +350,7 @@ class ConsecHorzHoles extends BoardRater
             final int colHeight = board.getColumnHeight(x);
             int y = colHeight - 2;      // address of first possible hole
 
-            // Iterate down the row
+            // Iterate down the column
             boolean consecutiveHole = false;
             while (y >= 0)
             {
@@ -365,7 +365,6 @@ class ConsecHorzHoles extends BoardRater
                 else
                 {
                     // If we find a filled space
-
                     consecutiveHole = false;    // ...prepare for the next hole
                 }
                 y--;
@@ -412,7 +411,7 @@ class HeightMax extends BoardRater
 }
 
 /**
- * Finds the difference between the tallest and shortest columns
+ * Finds the difference in height between the tallest and shortest columns
  * 
  * This is used because it is generally worse to have a really tall and really short column than to just have a flat, tall board.
  */
@@ -506,6 +505,7 @@ class RowsWithHolesInMostHoledColumn extends BoardRater
             int y = colHeight - 2;      // The first place there could be a hole
             int holes = 0;
 
+            // Iterate down the board, counting holes
             while (y >= 0)
             {
                 if (!board.getGrid(x, y))
@@ -556,7 +556,9 @@ class SimpleHoles extends BoardRater
 }
 
 /**
- * Finds the average variance between each set of 3 contiguous columns
+ * Finds the average variance between each set of 3 contiguous columns.
+ * 
+ * In other words, it finds the variance in each set of 3 contiguous columns (including overlaps) and finds their mean.
  */
 class ThreeVariance extends BoardRater
 {
@@ -621,12 +623,11 @@ class NotTrough extends BoardRater
 /**
  * Comes up with a measure of the amount of holes, with a negative bias on lower holes, such that holes that are deeply buried are worse than holes near the surface
  * 
- * Each hole is multiplied by the difference in height between the tallest column and the hole height.
+ * Each hole is represented by the difference in height between the tallest column and the hole height in order to add this negative bias.
  * 
  * The number is then divided by the height of the tallest column which puts it on a scale between 0 and 1.
  * 
  * These numbers are then added up.
- * 
  */
 class WeightedHoles extends BoardRater
 {
@@ -659,10 +660,10 @@ class WeightedHoles extends BoardRater
                     // Add the difference in height between the tallest column and the hole, put on a 0-1 scale based on the tallest column being 1
                     weightedHoleCount += (double) (maxHeight - y) / (double) maxHeight;
                 }
+
                 y--;
             }
         }
-
         return weightedHoleCount;
     }
 }
@@ -697,7 +698,7 @@ class GeneticCoefficientFinder
 
     static TetrisController controller;                         // The Tetris game controller
 
-    static Random           rand                 = new Random();        // For generating random stuff
+    static Random           rand                 = new Random();        // For generating random numbers
 
     public static void main(String args[])
     {
@@ -705,13 +706,13 @@ class GeneticCoefficientFinder
     }
 
     /**
-     * Runs the genetic algorithm
+     * Runs the genetic algorithm. Runs until manually stopped, constantly trying to produce better and better coefficients
      */
     public static void runCoefficientFinder()
     {
         controller = new TetrisController();
 
-        // Load the GUI
+        // Load the GUI view of the running game
         // This can be safely commented out to disable the GUI
         RunTetrisGeneticView.load(controller);
 
@@ -722,15 +723,15 @@ class GeneticCoefficientFinder
         {
             Individual indiv = new Individual();
 
-            indiv.coefficients = generateRandomCoefficients(COEFFICIENTS);
-            indiv.moves = avgMoves(indiv.coefficients);         // Determine the average number of moves these coefficients create
+            indiv.coefficients = generateRandomCoefficients(COEFFICIENTS);      // Generate a random individual
+            indiv.moves = avgMoves(indiv.coefficients);         // Determine the average number of moves this individual's coefficients make
 
             System.out.println(i + " " + indiv.moves);
 
             population.add(indiv);
         }
 
-        Collections.sort(population); // Sort the population (better individuals earlier)
+        Collections.sort(population); // Sort the population (puts better individuals earlier)
 
         System.out.println("Avg moves: " + populationAvgMoves(population));
         System.out.println(population);
@@ -743,24 +744,25 @@ class GeneticCoefficientFinder
             // Add elitists in to the new generation
             // These consist of the very best individuals from the previous population
             System.out.println("Elitists");
-            int number = (int) (ELITIST * POPULATION_SIZE);
+            int number = (int) (ELITIST * POPULATION_SIZE);             // Number of elitists to add in
             for (int i = 0; i < number; i++)
             {
+                // Just pull them off the top of the old population
                 Individual indiv = population.get(i);
                 System.out.println(i + " " + indiv.moves);
                 newPopulation.add(indiv);
             }
 
             // Throw a couple new random individuals into the new population
-            // This keeps genetic variability high so we prevent approaching coefficients that aren't the ideal
+            // This keeps genetic variability high so we prevent approaching arbitrary coefficients very quickly
             System.out.println("Randoms");
-            number = (int) (RANDOM * POPULATION_SIZE);
+            number = (int) (RANDOM * POPULATION_SIZE);          // Number of random individuals to add in
             for (int i = 0; i < number; i++)
             {
                 Individual indiv = new Individual();
 
-                indiv.coefficients = generateRandomCoefficients(COEFFICIENTS);
-                indiv.moves = avgMoves(indiv.coefficients);
+                indiv.coefficients = generateRandomCoefficients(COEFFICIENTS);   // Generate a random individual
+                indiv.moves = avgMoves(indiv.coefficients);                      // Determine the average number of moves this individual's coefficients make
 
                 System.out.println(newPopulation.size() + " " + indiv.moves);
 
@@ -769,9 +771,9 @@ class GeneticCoefficientFinder
 
             // Create new individuals by mimicking intercourse between the top individuals from the previous generation
             System.out.println("Sex");
-            for (int i = newPopulation.size(); i < POPULATION_SIZE; i++)
+            for (int i = newPopulation.size(); i < POPULATION_SIZE; i++)    // Iterate from the current newPoplation size through the goal size
             {
-                // Choose 2 fit parents. Uses a normal model to randomly select individuals, giving preference to the better ones
+                // Choose 2 parents. Uses a normal model to randomly select individuals, giving preference to the better ones
                 int element = (int) Math.abs(rand.nextGaussian() * (POPULATION_SIZE / STD_DEVIATIONS));
                 if (element >= POPULATION_SIZE)
                     element = POPULATION_SIZE - 1;
@@ -784,11 +786,12 @@ class GeneticCoefficientFinder
 
                 Individual parent2 = population.get(element);
 
-                // Mix the parents by randomly selecting whether each coefficient comes from parent 1 or 2
+                // Imitate reproduction by randomly selecting whether each of the child's coefficients comes from parent 1 or 2
                 double[] newCoefs = new double[COEFFICIENTS];
 
-                for (int k = 0; k < COEFFICIENTS; k++)
+                for (int k = 0; k < COEFFICIENTS; k++)          // Iterate over the coefficients
                 {
+                    // Randomly choose which parent to choose it from
                     if (rand.nextBoolean())
                         newCoefs[k] = parent1.coefficients[k];
                     else
@@ -798,23 +801,23 @@ class GeneticCoefficientFinder
                 // Mutate the coefficients
                 for (int k = 0; k < COEFFICIENTS; k++)
                 {
-                    // Randomly decide if we should mutate this one
+                    // Decide if we should mutate this one based on the constant MUTATION_PROBABILITY
                     boolean mutate = rand.nextInt((int) (1 / MUTATION_PROBABILITY)) == 0;
 
-                    if (mutate)
-                        newCoefs[k] += (rand.nextDouble() * MUTATION_RANGE * 2 - MUTATION_RANGE);       // Mutate it by +-MUTATION_RANGE
+                    if (mutate)         // If we want to mutate it, then mutate it by a random number within +-MUTATION_RANGE
+                        newCoefs[k] += (rand.nextDouble() * MUTATION_RANGE * 2 - MUTATION_RANGE);
                 }
 
                 // Create the new individual using the new coefficients and evaluate its quality
                 Individual newIndiv = new Individual();
                 newIndiv.coefficients = newCoefs;
-                newIndiv.moves = avgMoves(newIndiv.coefficients);
+                newIndiv.moves = avgMoves(newIndiv.coefficients);       // Determine the average number of moves this individual's coefficients make
 
                 System.out.println(newPopulation.size() + " " + newIndiv.moves);
                 newPopulation.add(newIndiv);
             }
 
-            // Prepare for the next generation by sorting and bumping the new one into the old spot
+            // Sort the new generation and bump it into the its parents' spot
             population = newPopulation;
             Collections.sort(population);
 
@@ -824,7 +827,7 @@ class GeneticCoefficientFinder
     }
 
     /**
-     * Calculates the average number of moves a population accomplished
+     * Calculates the average number of moves a population achieved
      * 
      * @param pop The population to look at
      * @return The average number of moves
@@ -864,44 +867,50 @@ class GeneticCoefficientFinder
     {
         System.out.println(Arrays.toString(coefficients));
         System.out.print("{");
+        
         int sum = 0;
-        for (int i = 0; i < AVG_CALCULATING_N; i++)
+        
+        for (int i = 0; i < AVG_CALCULATING_N; i++)      // For each game that we're supposed to run
         {
-            int game = quickGame(coefficients);
+            int game = quickGame(coefficients);          // Run a game
             System.out.print(game + " ");
 
-            sum += game;
+            sum += game;                // Add it to the sum
         }
         System.out.print("} ");
 
+        // Return the mean
         return sum / AVG_CALCULATING_N;
     }
 
     /**
-     * Runs a single game with a set of coefficients and returns the number of moves the AI made it
+     * Runs a single game with a set of coefficients and returns the number of moves the AI survived
      * 
      * @param coef The array of coefficients to use
      * @return The number of moves the AI made it
      */
     private static int quickGame(double[] coef)
     {
-        // Start a game
+        // Initialize the game
         TetrisController tc = controller;
         tc.startGame();
 
         // Load the AI
         AI ai = new AmityAI(coef);
 
-        // Run the game
+        // Run the game until it is over
         while (tc.gameOn)
         {
+            // Figure out what our AI thinks the best next move is based on the current coefficients 
             Move move = ai.bestMove(new Board(tc.board), tc.currentMove.piece, tc.nextPiece, tc.board.getHeight() - TetrisController.TOP_SPACE);
 
+            // Rotate the piece until it is at the correct rotation
             while (!tc.currentMove.piece.equals(move.piece))
             {
                 tc.tick(TetrisController.ROTATE);
             }
 
+            // Move the piece horizontally until it is at the correct position
             while (tc.currentMove.x != move.x)
             {
                 tc.tick(((tc.currentMove.x < move.x) ? TetrisController.RIGHT : TetrisController.LEFT));
@@ -909,24 +918,28 @@ class GeneticCoefficientFinder
 
             int current_count = tc.count;
 
+            // Drop the piece until it either hits the bottom or we lose
             while ((current_count == tc.count) && tc.gameOn)
                 tc.tick(TetrisController.DOWN);
         }
 
+        // Return the number of moves
         return tc.count;
     }
 }
 
 /**
- * A set of coefficients and the average number of move those coefficients were recorded as performing
+ * Represents a single individual in the population for the Genetic Algorithm
+ * 
+ * Contains a set of coefficients ("genes") and the average number of move those coefficients were recorded as performing
  * 
  * @author Daniel Centore
  * 
  */
 class Individual implements Comparable<Individual>
 {
-    double[] coefficients;      // Array of coefficients
-    int      moves;       // The average number of moves those coefficients resulted in
+    double[] coefficients;   // Array of coefficients (originally chosen to be between 0 and 1, but mutations can pull them out of this range)
+    int      moves;          // The average number of moves those coefficients resulted in
 
     @Override
     public String toString()
@@ -981,8 +994,8 @@ class RunTetrisGeneticView extends JComponent
         this.setPreferredSize(new Dimension(width, height));
 
         this.tc = tc;
-
-        // Create the Timer object and have it send
+        
+        // Create the Timer object which repaints the current status of the game
         this.timer = new javax.swing.Timer(this.DELAY, new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent e)
@@ -1073,15 +1086,6 @@ class RunTetrisGeneticView extends JComponent
     }
 
     /**
-     * Updates the timer to reflect the current setting of the speed slider.
-     */
-    public void updateTimer()
-    {
-        final double value = (double) this.speed.getValue() / this.speed.getMaximum();
-        this.timer.setDelay((int) (this.DELAY - value * this.DELAY));
-    }
-
-    /**
      * Creates the panel of UI controls.
      */
     public java.awt.Container createControlPanel()
@@ -1096,15 +1100,11 @@ class RunTetrisGeneticView extends JComponent
         panel.add(this.countLabel);
 
         // ROWS Cleared
-        this.rowsClearedLabel = new JLabel("0" + " Rows CLeared");
+        this.rowsClearedLabel = new JLabel("0" + " Rows Cleared");
         panel.add(this.rowsClearedLabel);
 
         this.difficulty = new JLabel();
         panel.add(this.difficulty);
-
-        // TIME
-        this.timeLabel = new JLabel(" ");
-        panel.add(this.timeLabel);
 
         panel.add(Box.createVerticalStrut(12));
 
