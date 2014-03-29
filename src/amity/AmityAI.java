@@ -167,30 +167,10 @@ public class AmityAI implements AI
  */
 class FinalRater extends BoardRater
 {
-
-
-
-
-    // @formatter:off
     /**
-     * The list of heuristics we will use to meaure the status of the board
+     * The list of heuristics we will use to measure the status of the board
      */
-    public static BoardRater raters[]     = {
-        new ConsecHorzHoles(),
-        new HeightAvg(),
-        new HeightMax(),
-        new HeightMinMax(),
-        new HeightVar(),
-        new HeightStdDev(),
-        new SimpleHoles(),
-        new ThreeVariance(),
-        new NotTrough(),
-        new WeightedHoles(),
-        new RowsWithHolesInMostHoledColumn(),
-        new AverageSquaredTroughHeight(),
-        new BlocksAboveHoles()
-    };
-    // @formatter:on
+    public static BoardRater raters[]     = { new ConsecHorzHoles(), new HeightAvg(), new HeightMax(), new HeightMinMax(), new HeightVar(), new HeightStdDev(), new SimpleHoles(), new ThreeVariance(), new NotTrough(), new WeightedHoles(), new RowsWithHolesInMostHoledColumn(), new AverageSquaredTroughHeight(), new BlocksAboveHoles() };
 
     /**
      * This is a parallel array with the raters[] one. We multiply the result from a rater by its corresponding coefficient.
